@@ -408,3 +408,40 @@ values (0, true, '09:00', '19:00'),   -- Sunday
        (5, true, '09:00', '14:00'),   -- Friday
        (6, true, '20:00', '23:00')    -- Saturday night
 on conflict (weekday) do nothing;
+
+-- ============================================================================
+--  Explicit table privileges
+--
+--  The project is created with "automatically expose new tables" turned OFF,
+--  so nothing is reachable through the Data API unless it is granted here.
+--  That gives the appointments table two independent locks: the anon role has
+--  no privilege on it at all, and even if it did, RLS grants it no rows.
+-- ============================================================================
+grant usage on schema public to anon, authenticated;
+
+-- What a visitor may read: only what is needed to show availability.
+grant select on
+  public.services,
+  public.work_hours,
+  public.breaks,
+  public.day_overrides,
+  public.shop_settings
+to anon, authenticated;
+
+-- Deliberately absent: any grant on public.appointments to anon.
+
+-- The admin signs in, so they act as "authenticated". RLS then narrows this to
+-- accounts listed in public.admins — a signed-in non-admin still gets nothing.
+grant select, insert, update, delete on
+  public.services,
+  public.work_hours,
+  public.breaks,
+  public.day_overrides,
+  public.shop_settings,
+  public.appointments
+to authenticated;
+
+grant select on public.admins to authenticated;
+
+-- Identity columns need their sequences to insert.
+grant usage, select on all sequences in schema public to authenticated;
