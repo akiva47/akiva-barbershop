@@ -3,7 +3,7 @@
 #
 # project_id must match the reference in your project URL:
 #   https://<project_id>.supabase.co
-project_id = "PASTE_YOUR_PROJECT_REF_HERE"
+project_id = "qvwncsjqlaextvlifmaz"
 
 [db]
 major_version = 15
