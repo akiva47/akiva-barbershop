@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FAF7F1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16130F" media="(prefers-color-scheme: dark)">
+<meta name="robots" content="noindex">
+<title>המספרה של עקיבא</title>
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="icon" type="image/png" href="assets/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&family=Suez+One&display=swap">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<div class="wrap">
+  <header class="masthead">
+    <div class="pole" aria-hidden="true"></div>
+    <h1 class="shop-name" data-t="shopName">המספרה של עקיבא</h1>
+    <div class="lang-toggle" role="group" aria-label="Language">
+      <button type="button" data-lang-btn="he" aria-pressed="true">עב</button>
+      <button type="button" data-lang-btn="en" aria-pressed="false">EN</button>
+    </div>
+  </header>
+
+  <section class="card">
+    <h2 class="step-title" style="font-size:20px;margin-block-end:12px" data-t="cancelTitle">התור שלך</h2>
+    <div id="loading" class="spinner"></div>
+    <div id="notice" class="notice hidden"></div>
+    <div id="details" class="hidden">
+      <div class="notice notice-quiet" id="apptSummary" style="margin-block-end:14px"></div>
+      <button class="btn btn-danger" id="cancelBtn" type="button" data-t="cancelBtn">בטל את התור</button>
+    </div>
+    <p style="margin-block-start:16px;text-align:center">
+      <a href="index.html" style="color:var(--ink-3);font-size:14px" data-t="bookAnother">לקבוע תור נוסף</a>
+    </p>
+  </section>
+</div>
+
+<script src="js/supabase.js"></script>
+<script src="js/config.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/common.js"></script>
+<script src="js/cancel.js"></script>
+</body>
+</html>

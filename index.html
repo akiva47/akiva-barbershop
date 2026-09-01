@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="המספרה של עקיבא">
+<meta name="theme-color" content="#FAF7F1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16130F" media="(prefers-color-scheme: dark)">
+<meta name="description" content="קביעת תור למספרה של עקיבא">
+<title>המספרה של עקיבא</title>
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="icon" type="image/png" href="assets/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&family=Suez+One&display=swap">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="pole" aria-hidden="true"></div>
+    <h1 class="shop-name" data-t="shopName">המספרה של עקיבא</h1>
+    <div class="lang-toggle" role="group" aria-label="Language">
+      <button type="button" data-lang-btn="he" aria-pressed="true">עב</button>
+      <button type="button" data-lang-btn="en" aria-pressed="false">EN</button>
+    </div>
+  </header>
+
+  <div id="topNotice" class="notice notice-error hidden"></div>
+
+  <!-- ============================ booking flow ============================ -->
+  <div id="flow">
+
+    <section class="card">
+      <div class="step-head">
+        <span class="step-num">1</span>
+        <h2 class="step-title" data-t="step1">בחר שירות</h2>
+      </div>
+      <div class="services" id="services">
+        <div class="spinner" aria-label="loading"></div>
+      </div>
+    </section>
+
+    <section class="card" id="dayCard">
+      <div class="step-head">
+        <span class="step-num">2</span>
+        <h2 class="step-title" data-t="step2">בחר יום</h2>
+      </div>
+      <div class="days" id="days"></div>
+    </section>
+
+    <section class="card" id="timeCard">
+      <div class="step-head">
+        <span class="step-num">3</span>
+        <h2 class="step-title" data-t="step3">בחר שעה</h2>
+        <span class="step-hint" id="dayLabel"></span>
+      </div>
+      <div class="slots" id="slots"></div>
+      <div class="empty hidden" id="slotsEmpty" data-t="pickServiceFirst">בחר שירות כדי לראות שעות פנויות</div>
+    </section>
+
+    <section class="card hidden" id="detailsCard">
+      <div class="step-head">
+        <span class="step-num">4</span>
+        <h2 class="step-title" data-t="step4">הפרטים שלך</h2>
+      </div>
+      <div class="notice notice-quiet" id="summary" style="margin-block-end:14px"></div>
+      <form id="bookForm" novalidate>
+        <div class="field">
+          <label for="cName" data-t="name">שם מלא</label>
+          <input id="cName" type="text" autocomplete="name" maxlength="60"
+                 data-t-ph="namePlaceholder" placeholder="איך קוראים לך?" required>
+        </div>
+        <div class="field">
+          <label for="cPhone" data-t="phone">טלפון</label>
+          <input id="cPhone" type="tel" autocomplete="tel" maxlength="25"
+                 data-t-ph="phonePlaceholder" placeholder="050-0000000" required>
+        </div>
+        <div class="field">
+          <label for="cNote" data-t="note">הערה (לא חובה)</label>
+          <input id="cNote" type="text" maxlength="200"
+                 data-t-ph="notePlaceholder" placeholder="משהו שכדאי שאדע?">
+        </div>
+        <div id="formNotice" class="notice notice-error hidden" style="margin-block-end:11px"></div>
+        <button class="btn" type="submit" id="bookBtn" data-t="book">קבע תור</button>
+      </form>
+    </section>
+
+  </div>
+
+  <!-- ============================ confirmation ============================ -->
+  <section class="card hidden" id="done">
+    <h2 class="step-title" style="font-size:21px" data-t="confirmedTitle">התור נקבע</h2>
+    <p style="color:var(--ink-2);margin-block:6px 14px" data-t="confirmedBody">נתראה!</p>
+    <div class="notice notice-ok" id="doneSummary" style="margin-block-end:14px"></div>
+    <p class="step-hint" data-t="saveThisLink">שמור את הקישור הזה — דרכו אפשר לבטל את התור</p>
+    <div class="inline" style="margin-block:10px 14px">
+      <input id="cancelLink" type="text" readonly
+             style="flex:1;min-width:0;font-size:13px;background:var(--sunken);border:1px solid var(--line);border-radius:9px;padding:9px">
+      <button class="btn" style="width:auto" id="copyBtn" type="button" data-t="copyLink">העתק קישור</button>
+    </div>
+    <button class="btn btn-quiet" id="againBtn" type="button" data-t="bookAnother">לקבוע תור נוסף</button>
+  </section>
+
+  <p class="foot"><a href="admin.html" data-t="adminTitle">ניהול</a></p>
+</div>
+
+<script src="js/supabase.js"></script>
+<script src="js/config.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/common.js"></script>
+<script src="js/booking.js"></script>
+</body>
+</html>

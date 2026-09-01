@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ניהול">
+<meta name="theme-color" content="#FAF7F1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16130F" media="(prefers-color-scheme: dark)">
+<meta name="robots" content="noindex">
+<title>ניהול</title>
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="icon" type="image/png" href="assets/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&family=Suez+One&display=swap">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="pole" aria-hidden="true"></div>
+    <h1 class="shop-name"><span data-t="shopName">המספרה של עקיבא</span></h1>
+    <div class="lang-toggle" role="group" aria-label="Language">
+      <button type="button" data-lang-btn="he" aria-pressed="true">עב</button>
+      <button type="button" data-lang-btn="en" aria-pressed="false">EN</button>
+    </div>
+  </header>
+
+  <!-- =============================== sign in =============================== -->
+  <section class="card" id="loginCard">
+    <h2 class="step-title" style="margin-block-end:14px" data-t="adminTitle">ניהול</h2>
+    <form id="loginForm" novalidate>
+      <div class="field">
+        <label for="email" data-t="email">אימייל</label>
+        <input id="email" type="email" autocomplete="username" required>
+      </div>
+      <div class="field">
+        <label for="password" data-t="password">סיסמה</label>
+        <input id="password" type="password" autocomplete="current-password" required>
+      </div>
+      <div id="loginNotice" class="notice notice-error hidden" style="margin-block-end:11px"></div>
+      <button class="btn" type="submit" id="loginBtn" data-t="signIn">התחבר</button>
+    </form>
+  </section>
+
+  <!-- ============================== admin app ============================== -->
+  <div id="adminApp" class="hidden stack">
+
+    <div class="tabs" role="tablist">
+      <button role="tab" data-tab="diary"    aria-selected="true"  data-t="tabToday">היומן</button>
+      <button role="tab" data-tab="hours"    aria-selected="false" data-t="tabHours">שעות עבודה</button>
+      <button role="tab" data-tab="breaks"   aria-selected="false" data-t="tabBreaks">הפסקות</button>
+      <button role="tab" data-tab="days"     aria-selected="false" data-t="tabDays">ימים חריגים</button>
+      <button role="tab" data-tab="services" aria-selected="false" data-t="tabServices">שירותים</button>
+    </div>
+
+    <div id="adminNotice" class="notice hidden"></div>
+
+    <!-- diary -->
+    <section class="card" data-panel="diary">
+      <div class="inline" style="margin-block-end:12px">
+        <button class="btn btn-quiet" style="width:auto" id="prevDay" type="button">‹</button>
+        <input type="date" id="diaryDate" style="flex:1;min-width:0;font:inherit;font-size:15px;color:var(--ink);background:var(--sunken);border:1px solid var(--line);border-radius:9px;padding:8px 10px">
+        <button class="btn btn-quiet" style="width:auto" id="nextDay" type="button">›</button>
+      </div>
+      <div id="diaryList"></div>
+    </section>
+
+    <!-- weekly opening hours -->
+    <section class="card hidden" data-panel="hours">
+      <div id="hoursList"></div>
+      <button class="btn" id="saveHours" type="button" style="margin-block-start:14px" data-t="save">שמור</button>
+    </section>
+
+    <!-- breaks -->
+    <section class="card hidden" data-panel="breaks">
+      <div id="breaksList"></div>
+      <div class="row" style="margin-block-start:8px">
+        <select id="breakWeekday" style="font:inherit;font-size:15px;color:var(--ink);background:var(--sunken);border:1px solid var(--line);border-radius:9px;padding:7px 9px"></select>
+        <input type="time" id="breakStart" value="13:00">
+        <input type="time" id="breakEnd" value="14:00">
+        <button class="btn" style="width:auto" id="addBreak" type="button" data-t="addBreak">הוסף הפסקה</button>
+      </div>
+    </section>
+
+    <!-- special days -->
+    <section class="card hidden" data-panel="days">
+      <div id="daysList"></div>
+      <div class="row" style="margin-block-start:8px">
+        <input type="date" id="ovDate">
+        <label class="inline" style="gap:6px;font-size:14px">
+          <button class="switch" id="ovClosed" type="button" role="switch" aria-checked="true"></button>
+          <span data-t="dayClosed">סגור כל היום</span>
+        </label>
+        <input type="time" id="ovOpen" value="09:00" class="hidden">
+        <input type="time" id="ovClose" value="19:00" class="hidden">
+        <button class="btn" style="width:auto" id="addOverride" type="button" data-t="addDayOff">הוסף יום חריג</button>
+      </div>
+    </section>
+
+    <!-- services -->
+    <section class="card hidden" data-panel="services">
+      <div id="servicesList"></div>
+      <button class="btn" id="saveServices" type="button" style="margin-block-start:14px" data-t="save">שמור</button>
+      <div class="row" style="margin-block-start:10px">
+        <input type="text" id="newSvcHe" data-t-ph="serviceNameHe" placeholder="שם בעברית" style="flex:1;min-width:110px">
+        <input type="text" id="newSvcEn" data-t-ph="serviceNameEn" placeholder="שם באנגלית" style="flex:1;min-width:110px">
+        <input type="number" id="newSvcDur" value="30" min="5" max="480" step="5" style="width:76px">
+        <input type="number" id="newSvcPrice" value="70" min="0" step="5" style="width:76px">
+        <button class="btn" style="width:auto" id="addService" type="button" data-t="addService">הוסף שירות</button>
+      </div>
+    </section>
+
+    <button class="btn btn-quiet" id="signOut" type="button" data-t="signOut">התנתק</button>
+  </div>
+
+  <p class="foot"><a href="index.html" data-t="bookAnother">לקבוע תור</a></p>
+</div>
+
+<script src="js/supabase.js"></script>
+<script src="js/config.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/common.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>
