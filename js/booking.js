@@ -67,7 +67,10 @@
       if (s.price !== null && s.price !== undefined) {
         const price = document.createElement("span");
         price.className = "service-price";
-        price.textContent = t.currency + Number(s.price).toFixed(0);
+        // A service can be priced as a range, e.g. 15-20.
+        price.textContent = (s.price_max !== null && s.price_max !== undefined)
+          ? t.currency + Number(s.price).toFixed(0) + "-" + Number(s.price_max).toFixed(0)
+          : t.currency + Number(s.price).toFixed(0);
         meta.appendChild(price);
       }
 
@@ -157,7 +160,7 @@
   async function loadServices() {
     const { data, error } = await A.db
       .from("services")
-      .select("id,name_he,name_en,duration_min,price")
+      .select("id,name_he,name_en,duration_min,price,price_max")
       .eq("active", true)
       .order("sort_order");
     if (error) {

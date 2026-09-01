@@ -346,9 +346,20 @@
       price.style.width = "72px";
       price.addEventListener("input", () => { s.price = price.value === "" ? null : Number(price.value); });
 
+      const priceMax = document.createElement("input");
+      priceMax.type = "number";
+      priceMax.value = (s.price_max === null || s.price_max === undefined) ? "" : s.price_max;
+      priceMax.min = 0; priceMax.step = 5;
+      priceMax.style.width = "72px";
+      priceMax.placeholder = "–";
+      priceMax.title = A.t.priceMax;
+      priceMax.addEventListener("input", () => {
+        s.price_max = priceMax.value === "" ? null : Number(priceMax.value);
+      });
+
       const sw = toggle(s.active, (v) => { s.active = v; });
 
-      row.append(he, en, dur, price, sw);
+      row.append(he, en, dur, price, priceMax, sw);
       el.servicesList.appendChild(row);
     });
   }
@@ -363,8 +374,8 @@
     }
     const rows = state.services.map((s) => ({
       id: s.id, name_he: s.name_he.trim(), name_en: s.name_en.trim(),
-      duration_min: s.duration_min, price: s.price, active: s.active,
-      sort_order: s.sort_order
+      duration_min: s.duration_min, price: s.price, price_max: s.price_max,
+      active: s.active, sort_order: s.sort_order
     }));
     const { error } = await A.db.from("services").upsert(rows, { onConflict: "id" });
     if (error) { flash("error", A.errorText(error)); return; }
