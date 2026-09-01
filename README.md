@@ -33,7 +33,7 @@ close to Israel (Frankfurt is the usual choice).
 
 ### 2. Create the tables
 
-Open **SQL Editor**, paste the whole of `db/schema.sql`, and run it. It is safe
+Open **SQL Editor**, paste the whole of `supabase/migrations/*_init_barbershop.sql`, and run it. It is safe
 to run more than once.
 
 ### 3. Create your admin account
@@ -82,7 +82,7 @@ the booking lead time and how far ahead customers may book live in the
 index.html          customer booking
 admin.html          your diary and settings
 cancel.html         the page a customer's cancellation link opens
-db/schema.sql       tables, policies and functions — the security model
+supabase/migrations/  tables, policies and functions — the security model
 js/config.js        your project URL and anon key
 js/i18n.js          every string, Hebrew and English
 js/common.js        database client, language, date formatting

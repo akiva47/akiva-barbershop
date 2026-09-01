@@ -1,0 +1,9 @@
+# Minimal Supabase project config. The GitHub integration reads this to know
+# which project the migrations in ./migrations belong to.
+#
+# project_id must match the reference in your project URL:
+#   https://<project_id>.supabase.co
+project_id = "PASTE_YOUR_PROJECT_REF_HERE"
+
+[db]
+major_version = 15
