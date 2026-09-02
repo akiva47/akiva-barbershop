@@ -87,10 +87,10 @@ body {
   max-width: 560px;
   margin-inline: auto;
   padding-inline: 16px;
-  padding-block: 18px calc(56px + env(safe-area-inset-bottom));
+  padding-block: 12px calc(40px + env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 12px;
 }
 
 /* --------------------------------------------------------------- masthead */
@@ -101,8 +101,8 @@ body {
 }
 
 .pole {
-  width: 30px;
-  height: 44px;
+  width: 24px;
+  height: 36px;
   border-radius: 8px;
   flex: none;
   background: repeating-linear-gradient(
@@ -117,7 +117,7 @@ body {
 
 .shop-name {
   font-family: var(--f-display);
-  font-size: clamp(21px, 5.4vw, 27px);
+  font-size: clamp(19px, 5vw, 23px);
   line-height: 1.15;
   margin: 0;
   letter-spacing: -0.01em;
@@ -158,14 +158,14 @@ body {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  padding: 16px;
+  padding: 12px;
 }
 
 .step-head {
   display: flex;
   align-items: baseline;
-  gap: 9px;
-  margin-block-end: 13px;
+  gap: 8px;
+  margin-block-end: 9px;
 }
 
 .step-num {
@@ -184,7 +184,7 @@ body {
 
 .step-title {
   font-family: var(--f-display);
-  font-size: 17px;
+  font-size: 16px;
   margin: 0;
   flex: 1;
   min-width: 0;
@@ -196,7 +196,7 @@ body {
 }
 
 /* --------------------------------------------------------------- services */
-.services { display: flex; flex-direction: column; gap: 8px; }
+.services { display: flex; flex-direction: column; gap: 6px; }
 
 .service {
   display: flex;
@@ -208,8 +208,8 @@ body {
   color: inherit;
   background: var(--sunken);
   border: 2px solid transparent;
-  border-radius: 12px;
-  padding: 12px 14px;
+  border-radius: 11px;
+  padding: 10px 12px;
   cursor: pointer;
   transition: border-color .16s, background .16s;
 }
@@ -238,7 +238,7 @@ body {
 .days {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 6px;
+  gap: 5px;
 }
 
 .day {
@@ -246,19 +246,19 @@ body {
   color: inherit;
   background: var(--sunken);
   border: 2px solid transparent;
-  border-radius: 11px;
-  padding: 9px 2px;
+  border-radius: 10px;
+  padding: 6px 2px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 1px;
   min-width: 0;
   transition: border-color .16s, background .16s, opacity .16s;
 }
 
-.day-name { font-size: 11px; color: var(--ink-3); }
-.day-num  { font-size: 17px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.day-name { font-size: 10.5px; line-height: 1.1; color: var(--ink-3); }
+.day-num  { font-size: 16px; line-height: 1.15; font-weight: 700; font-variant-numeric: tabular-nums; }
 
 .day[aria-pressed="true"] {
   border-color: var(--brass);
@@ -272,8 +272,8 @@ body {
 /* ------------------------------------------------------------------ slots */
 .slots {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
+  gap: 6px;
 }
 
 .slot {
@@ -283,8 +283,8 @@ body {
   color: var(--mint);
   background: var(--mint-soft);
   border: 2px solid transparent;
-  border-radius: 11px;
-  padding: 11px 4px;
+  border-radius: 10px;
+  padding: 10px 3px;
   cursor: pointer;
   transition: border-color .16s, background .16s, color .16s;
 }
@@ -298,7 +298,7 @@ body {
 }
 
 /* ------------------------------------------------------------------ forms */
-.field { display: flex; flex-direction: column; gap: 5px; margin-block-end: 11px; }
+.field { display: flex; flex-direction: column; gap: 4px; margin-block-end: 9px; }
 
 .field label { font-size: 13px; font-weight: 700; color: var(--ink-2); }
 
@@ -310,8 +310,8 @@ body {
   color: var(--ink);
   background: var(--sunken);
   border: 1px solid var(--line);
-  border-radius: 11px;
-  padding: 11px 13px;
+  border-radius: 10px;
+  padding: 10px 12px;
   width: 100%;
 }
 
@@ -328,8 +328,8 @@ body {
   font-weight: 800;
   font-size: 16px;
   border: none;
-  border-radius: 12px;
-  padding: 13px 18px;
+  border-radius: 11px;
+  padding: 12px 18px;
   cursor: pointer;
   background: var(--brass);
   color: #17130B;
