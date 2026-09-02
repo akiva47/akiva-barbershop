@@ -139,6 +139,21 @@
           loadDiary();
         });
         actions.appendChild(kill);
+      } else {
+        // Already cancelled: the only thing left to do is get it off the list.
+        const del = document.createElement("button");
+        del.type = "button";
+        del.className = "chip";
+        del.textContent = "\u{1F5D1}";
+        del.title = t.deleteAppt;
+        del.addEventListener("click", async () => {
+          if (!confirm(t.confirmDeleteAppt)) return;
+          const { error } = await A.db.from("appointments").delete().eq("id", a.id);
+          if (error) { flash("error", A.errorText(error)); return; }
+          flash("ok", t.saved);
+          loadDiary();
+        });
+        actions.appendChild(del);
       }
 
       row.append(time, body, actions);

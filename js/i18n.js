@@ -93,6 +93,8 @@ window.I18N = {
     priceMax: "מחיר עליון (לטווח)",
     active: "פעיל",
     cancelAppt: "בטל תור",
+    deleteAppt: "מחק לצמיתות",
+    confirmDeleteAppt: "למחוק את התור הזה לצמיתות? אי אפשר לשחזר.",
     call: "התקשר",
     weekdays: ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"],
     weekdaysShort: ["א׳", "ב׳", "ג׳", "ד׳", "ה׳", "ו׳", "ש׳"]
@@ -184,6 +186,8 @@ window.I18N = {
     priceMax: "Upper price (for a range)",
     active: "Active",
     cancelAppt: "Cancel appointment",
+    deleteAppt: "Delete permanently",
+    confirmDeleteAppt: "Delete this appointment for good? This cannot be undone.",
     call: "Call",
     weekdays: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
     weekdaysShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
