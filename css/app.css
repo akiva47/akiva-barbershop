@@ -87,7 +87,11 @@ body {
   max-width: 560px;
   margin-inline: auto;
   padding-inline: 16px;
+  /* An installed home-screen app draws underneath the translucent status
+     bar, so the top padding has to clear the notch or the masthead ends up
+     level with the clock. In Safari the inset is 0 and this is just 12px. */
   padding-block: 12px calc(40px + env(safe-area-inset-bottom));
+  padding-block-start: calc(12px + env(safe-area-inset-top, 0px));
   display: flex;
   flex-direction: column;
   gap: 12px;
