@@ -8,6 +8,10 @@ window.CONFIG = {
   SUPABASE_URL: "https://qvwncsjqlaextvlifmaz.supabase.co",
   SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF2d25jc2pxbGFleHR2bGlmbWF6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgyOTQwMDQsImV4cCI6MjEwMzg3MDAwNH0.pFUKBgU-0V_7PKmlxfNCrbQnbNh7YZAYO-YamdJ_vp0",
 
+  // Akiva's personal Bit payment link, shown on the customer page.
+  // Leave it empty ("") to hide the button entirely.
+  BIT_URL: "https://www.bitpay.co.il/app/me/C45641E0-2B2F-45E1-87DB-1A26A4256182",
+
   // Used only for displaying times. The authoritative timezone lives in the
   // shop_settings row in the database.
   TIMEZONE: "Asia/Jerusalem"

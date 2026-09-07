@@ -35,6 +35,7 @@ window.I18N = {
     copyLink: "העתק קישור",
     copied: "הועתק",
     bookAnother: "לקבוע תור נוסף",
+    payBit: "לתשלום בביט",
 
     // cancel page
     cancelTitle: "התור שלך",
@@ -131,6 +132,7 @@ window.I18N = {
     copyLink: "Copy link",
     copied: "Copied",
     bookAnother: "Book another",
+    payBit: "Pay with Bit",
 
     cancelTitle: "Your appointment",
     cancelBtn: "Cancel this appointment",

@@ -307,6 +307,17 @@
     loadSlots();
   });
 
+  // The Bit button only appears if a link is actually configured, so an empty
+  // BIT_URL leaves no dead button behind.
+  (function () {
+    const btn = document.getElementById("bitBtn");
+    const url = (window.CONFIG && window.CONFIG.BIT_URL) || "";
+    if (!btn) return;
+    if (!url) { btn.remove(); return; }
+    btn.href = url;
+    btn.classList.remove("hidden");
+  })();
+
   A.mountLangToggle();
 
   if (!A.requireConfig(el.topNotice)) {

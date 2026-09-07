@@ -351,6 +351,16 @@ body {
 
 .btn-danger { background: var(--pole); color: #FFFFFF; }
 
+/* Bit's own turquoise, kept constant in both themes so the button stays
+   recognisable as Bit rather than as part of this palette. */
+.btn-bit {
+  background: #00B9C6;
+  color: #06232A;
+  display: block;
+  text-align: center;
+  text-decoration: none;
+}
+
 /* ---------------------------------------------------------------- notices */
 .notice {
   border-radius: 12px;
