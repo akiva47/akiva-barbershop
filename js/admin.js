@@ -374,7 +374,28 @@
 
       const sw = toggle(s.active, (v) => { s.active = v; });
 
-      row.append(he, en, dur, price, priceMax, sw);
+      const del = document.createElement("button");
+      del.type = "button";
+      del.className = "chip";
+      del.textContent = "\u2715";
+      del.title = t.deleteService;
+      del.addEventListener("click", async () => {
+        if (!confirm(t.confirmDeleteService)) return;
+        const { error } = await A.db.from("services").delete().eq("id", s.id);
+        if (!error) { flash("ok", t.saved); loadServices(); return; }
+        // 23503 is a foreign key violation: an appointment still points at this
+        // service. Deleting it would break that booking, so hide it instead.
+        if (error.code === "23503") {
+          const hide = await A.db.from("services").update({ active: false }).eq("id", s.id);
+          if (hide.error) { flash("error", A.errorText(hide.error)); return; }
+          flash("quiet", t.serviceInUse);
+          loadServices();
+          return;
+        }
+        flash("error", A.errorText(error));
+      });
+
+      row.append(he, en, dur, price, priceMax, sw, del);
       el.servicesList.appendChild(row);
     });
   }
