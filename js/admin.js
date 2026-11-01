@@ -37,6 +37,7 @@
     const i = document.createElement("input");
     i.type = "time";
     i.value = A.hhmm(value);
+    i.addEventListener("input", () => onChange(i.value));
     i.addEventListener("change", () => onChange(i.value));
     return i;
   }
@@ -181,9 +182,13 @@
       label.className = "row-label";
       label.textContent = t.weekdays[h.weekday];
 
+      row.dataset.weekday = h.weekday;
+
       const sw = toggle(h.is_open, (v) => { h.is_open = v; });
       const from = timeInput(h.opens, (v) => { h.opens = v; });
       const to = timeInput(h.closes, (v) => { h.closes = v; });
+      from.dataset.role = "opens";
+      to.dataset.role = "closes";
 
       row.append(label, sw, from, to);
       el.hoursList.appendChild(row);
@@ -192,18 +197,42 @@
 
   $("saveHours").addEventListener("click", async () => {
     const t = A.t;
-    for (const h of state.hours) {
-      if (h.is_open && !(h.closes > h.opens)) {
-        flash("error", t.weekdays[h.weekday] + ": " + t.from + " / " + t.to);
+    const note = $("hoursNotice");
+    A.clearNotice(note);
+
+    // Read straight off the screen rather than relying on a change event
+    // having fired, which on iOS it may not have.
+    const rows = Array.prototype.map.call(
+      el.hoursList.querySelectorAll("[data-weekday]"),
+      (row) => ({
+        weekday: Number(row.dataset.weekday),
+        is_open: row.querySelector(".switch").getAttribute("aria-checked") === "true",
+        opens: A.hhmm(row.querySelector('[data-role="opens"]').value),
+        closes: A.hhmm(row.querySelector('[data-role="closes"]').value)
+      })
+    );
+
+    for (const h of rows) {
+      if (!h.is_open) continue;
+      if (!h.opens || !h.closes) {
+        A.notice(note, "error", t.weekdays[h.weekday] + ": " + t.from + " / " + t.to);
+        return;
+      }
+      // Both sides are now HH:MM, so this compares like with like.
+      if (h.closes <= h.opens) {
+        A.notice(note, "error", t.weekdays[h.weekday] + ": " + t.hoursBackwards);
         return;
       }
     }
-    const rows = state.hours.map((h) => ({
-      weekday: h.weekday, is_open: h.is_open, opens: h.opens, closes: h.closes
-    }));
+
+    A.notice(note, "quiet", t.saving);
     const { error } = await A.db.from("work_hours").upsert(rows, { onConflict: "weekday" });
-    if (error) { flash("error", A.errorText(error)); return; }
-    flash("ok", t.saved);
+    if (error) { A.notice(note, "error", A.errorText(error)); return; }
+
+    // Re-read rather than assume: the screen then shows what was really stored.
+    await loadHours();
+    A.notice(note, "ok", t.saved);
+    setTimeout(() => A.clearNotice(note), 2500);
   });
 
   // ------------------------------------------------------------------- breaks
