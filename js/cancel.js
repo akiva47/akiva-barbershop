@@ -30,9 +30,12 @@
 
     const starts = new Date(appt.starts_at);
     const service = A.lang === "he" ? appt.service_he : appt.service_en;
-    el.summary.textContent =
-      service + " · " + A.dateStr(starts) + " · " + A.timeStr(starts) +
-      " · " + appt.customer_name;
+    el.summary.innerHTML =
+      '<span class="tk-pole"></span>' +
+      '<div class="tk-svc">' + A.esc(service) + "</div>" +
+      '<div style="opacity:.6;font-weight:500;margin-top:4px">' + A.esc(appt.customer_name) + "</div>" +
+      '<div class="tk-row"><div><small>' + A.esc(t.date) + "</small><b>" + A.esc(A.dateStr(starts)) + "</b></div>" +
+      '<div><small>' + A.esc(t.time) + '</small><b class="tk-time">' + A.timeStr(starts) + "</b></div></div>";
     el.details.classList.remove("hidden");
 
     if (appt.status === "cancelled") {
@@ -58,12 +61,12 @@
     if (!confirm(t.confirmCancel)) return;
 
     el.cancelBtn.disabled = true;
-    el.cancelBtn.textContent = t.cancelling;
+    el.cancelBtn.firstElementChild.textContent = t.cancelling;
 
     const { data, error } = await A.db.rpc("cancel_appointment", { p_token: token });
 
     el.cancelBtn.disabled = false;
-    el.cancelBtn.textContent = t.cancelBtn;
+    el.cancelBtn.firstElementChild.textContent = t.cancelBtn;
 
     if (error) {
       A.notice(el.notice, "error", A.errorText(error));

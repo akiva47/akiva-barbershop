@@ -12,6 +12,10 @@ window.CONFIG = {
   // Leave it empty ("") to hide the button entirely.
   BIT_URL: "https://www.bitpay.co.il/app/me/C45641E0-2B2F-45E1-87DB-1A26A4256182",
 
+  // Akiva's WhatsApp, international format without "+". The number set on the
+  // admin "Site content" screen wins over this one.
+  WHATSAPP: "972586532121",
+
   // Used only for displaying times. The authoritative timezone lives in the
   // shop_settings row in the database.
   TIMEZONE: "Asia/Jerusalem"
