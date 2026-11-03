@@ -19,16 +19,44 @@
   FX.setLines = function (el, text) {
     const parts = String(text || "").split("|").map((s) => s.trim()).filter(Boolean);
     el.innerHTML = "";
+    let w = 0;
     parts.forEach((p, i) => {
       const line = document.createElement("span");
       line.className = "line";
-      const inner = document.createElement("span");
-      inner.style.setProperty("--i", i);
-      inner.textContent = p;
-      line.appendChild(inner);
+      line.style.setProperty("--i", i);
+      // Each word rises on its own, a beat after the one before it.
+      p.split(/\s+/).forEach((word, k) => {
+        if (k) line.appendChild(document.createTextNode(" "));
+        const s = document.createElement("span");
+        s.className = "w";
+        s.style.setProperty("--w", w++);
+        s.textContent = word;
+        line.appendChild(s);
+      });
       el.appendChild(line);
     });
     el.setAttribute("aria-label", parts.join(" "));
+  };
+
+  // A paragraph that lights up word by word as it scrolls through the screen.
+  FX.scrub = function (el, text) {
+    const words = String(text || "").split(/\s+/).filter(Boolean);
+    el.innerHTML = words.map((w) => "<span>" + w.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]) + "</span>").join(" ");
+    el.setAttribute("aria-label", words.join(" "));
+    const spans = el.children;
+    if (reduce) { Array.prototype.forEach.call(spans, (s) => s.classList.add("lit")); return; }
+    el._last = -1;     // a re-render (language switch) must repaint
+    if (el._scrub) return;
+    el._scrub = true;
+    FX.onFrame.push(() => {
+      const r = el.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const p = clamp((vh * 0.82 - r.top) / (r.height + vh * 0.35), 0, 1);
+      const n = Math.round(p * el.children.length);
+      if (n === el._last) return;
+      el._last = n;
+      for (let i = 0; i < el.children.length; i++) el.children[i].classList.toggle("lit", i < n);
+    });
   };
 
   // ---------------------------------------------------------------- reveals
@@ -89,7 +117,7 @@
     }
     return new Promise((resolve) => {
       const t0 = performance.now();
-      const min = 900;
+      const min = 1100;
       let done = false;
       ready.then(() => { done = true; }, () => { done = true; });
       (function tick(now) {
@@ -278,7 +306,7 @@
         const c = (r.left + r.width / 2 - window.innerWidth / 2) / window.innerWidth;
         items[i].style.setProperty("--px", (c * -8).toFixed(2) + "%");
       }
-      if (onIndex) onIndex(Math.round(p * (items.length - 1)));
+      if (onIndex) onIndex(Math.round(p * (items.length - 1)), p);
     });
     return { layout: layout };
   };
@@ -314,6 +342,104 @@
       if (now - t0 < 3200) requestAnimationFrame(tick);
       else ctx.clearRect(0, 0, w, h);
     })(t0);
+  };
+
+  // ----------------------------------------------------------- flying pole
+  // One barber pole, fixed on screen, that glides between positions set on
+  // each section (data-pole="x,y,rotation,scale" as fractions of the screen),
+  // and spins its stripes faster while the page is scrolling.
+  FX.poleFly = function () {
+    const pole = document.getElementById("poleFly");
+    if (!pole) return;
+    const stripes = pole.querySelector(".pole3d-stripes");
+    let anchors = [];
+    function measure() {
+      anchors = Array.from(document.querySelectorAll("[data-pole]"))
+        .filter((el) => el.offsetParent !== null)
+        .map((el) => {
+          const v = el.getAttribute("data-pole").split(",").map(Number);
+          return { top: el.getBoundingClientRect().top + window.scrollY, x: v[0], y: v[1], r: v[2], s: v[3] };
+        })
+        .sort((a, b) => a.top - b.top);
+    }
+    measure();
+    window.addEventListener("resize", measure);
+    document.addEventListener("site:layout", measure);
+    setTimeout(measure, 1500);
+    if (reduce) { pole.classList.add("still"); }
+    const ease = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    let spin = 0;
+    FX.onFrame.push((y, sy) => {
+      if (!anchors.length) return;
+      const vw = window.innerWidth, vh = window.innerHeight;
+      const probe = sy + vh * 0.5;
+      let i = 0;
+      while (i < anchors.length - 1 && anchors[i + 1].top <= probe) i++;
+      const a = anchors[i], b = anchors[Math.min(i + 1, anchors.length - 1)];
+      const span = Math.max(1, b.top - a.top);
+      const t = a === b ? 0 : ease(clamp((probe - a.top) / span, 0, 1));
+      // Positions are written for a left-to-right page; Hebrew mirrors them.
+      const fx = lerp(a.x, b.x, t);
+      const mobile = vw < 900;
+      const k = mobile ? 0.5 : 1;
+      const rtlDir = document.documentElement.dir === "rtl";
+      // On a phone the text fills the width, so the pole keeps to the free edge.
+      const x = (mobile ? (rtlDir ? 0.06 : 0.94) : (rtlDir ? 1 - fx : fx)) * vw;
+      const yy = lerp(a.y, b.y, t) * vh;
+      const r = (document.documentElement.dir === "rtl" ? -1 : 1) * lerp(a.r, b.r, t) + FX.velocity * 0.15;
+      const sc = lerp(a.s, b.s, t) * k;
+      pole.style.transform = "translate3d(" + x.toFixed(1) + "px," + yy.toFixed(1) + "px,0) translate(-50%,-50%) rotate(" + r.toFixed(2) + "deg) scale(" + sc.toFixed(3) + ")";
+      if (!reduce) {
+        spin += 0.6 + Math.abs(FX.velocity) * 0.9;
+        stripes.style.backgroundPositionY = (spin % 101.82).toFixed(1) + "px";
+      }
+    });
+  };
+
+  // ------------------------------------------------- page colour per section
+  FX.bgMorph = function () {
+    const secs = Array.from(document.querySelectorAll("[data-bg]"));
+    let cur = "";
+    FX.onFrame.push(() => {
+      const mid = window.innerHeight * 0.5;
+      let c = null;
+      for (const s of secs) {
+        const r = s.getBoundingClientRect();
+        if (r.top <= mid && r.bottom >= mid && s.offsetParent !== null) { c = s.getAttribute("data-bg"); break; }
+      }
+      if (c && c !== cur) { cur = c; document.body.style.backgroundColor = c; }
+    });
+  };
+
+  // ---------------------------------------------------------- stacked cards
+  // Sticky cards pile up; each one shrinks back a little as the next covers it.
+  FX.stack = function (container) {
+    if (reduce || !container) return;
+    const cards = Array.from(container.children);
+    FX.onFrame.push(() => {
+      const vh = window.innerHeight;
+      cards.forEach((c, i) => {
+        const next = cards[i + 1];
+        if (!next) return;
+        const r = next.getBoundingClientRect();
+        const p = clamp(1 - (r.top - vh * 0.18) / (vh * 0.6), 0, 1);
+        c.style.transform = "scale(" + (1 - p * 0.07).toFixed(4) + ")";
+        c.style.filter = "brightness(" + (1 - p * 0.35).toFixed(3) + ")";
+      });
+    });
+  };
+
+  // ------------------------------------------------------------- spotlight
+  // A soft light under the mouse on cards, from --x/--y.
+  FX.spotlight = function () {
+    if (!fine) return;
+    document.addEventListener("pointermove", (e) => {
+      const el = e.target.closest && e.target.closest("[data-spot], .svc");
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      el.style.setProperty("--x", (e.clientX - r.left) + "px");
+      el.style.setProperty("--y", (e.clientY - r.top) + "px");
+    }, { passive: true });
   };
 
   window.FX = FX;

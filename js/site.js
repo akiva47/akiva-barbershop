@@ -59,19 +59,33 @@
     if (url) {
       if (img.getAttribute("src") !== url) img.src = url;
       img.classList.remove("hidden");
-      $("heroPole").classList.add("hidden");
+      $("hero").classList.add("has-img");
     } else {
       img.classList.add("hidden");
-      $("heroPole").classList.remove("hidden");
+      $("hero").classList.remove("has-img");
     }
-    // The first service on the price list, as a sticker on the photo.
-    const s0 = S.services[0];
-    const st = $("stickerPrice");
-    if (s0 && A.priceText(s0)) {
-      st.textContent = A.serviceName(s0) + " " + A.priceText(s0);
-      st.classList.remove("hidden");
-    } else st.classList.add("hidden");
   }
+
+  function renderManifesto() {
+    FX.scrub($("manifesto"), A.t.manifesto);
+  }
+
+  function renderFaq() {
+    const list = $("faqList");
+    list.innerHTML = (A.t.faq || []).map((qa, i) =>
+      '<div class="faq-item" data-reveal data-spot style="--d:' + (i * 0.06) + 's">' +
+      '<button type="button" class="faq-q" aria-expanded="false"><span>' + A.esc(qa[0]) + '</span><i aria-hidden="true"></i></button>' +
+      '<div class="faq-a"><div><p>' + A.esc(qa[1]) + "</p></div></div></div>").join("");
+    FX.observe(list);
+  }
+  $("faqList").addEventListener("click", (e) => {
+    const q = e.target.closest(".faq-q");
+    if (!q) return;
+    const open = q.getAttribute("aria-expanded") !== "true";
+    q.setAttribute("aria-expanded", String(open));
+    q.parentElement.classList.toggle("open", open);
+    setTimeout(() => document.dispatchEvent(new CustomEvent("site:layout")), 500);
+  });
 
   function renderMarquee() {
     const words = A.c("marquee", "marquee").split(",").map((s) => s.trim()).filter(Boolean);
@@ -161,8 +175,9 @@
     }).join("");
     $("workTotal").textContent = String(S.gallery.length).padStart(2, "0");
     if (!pin) {
-      pin = FX.pinTrack($("work"), $("workPin"), track, (i) => {
+      pin = FX.pinTrack($("work"), $("workPin"), track, (i, p) => {
         $("workIdx").textContent = String(i + 1).padStart(2, "0");
+        $("workBar").style.transform = "scaleX(" + p.toFixed(4) + ")";
       });
     } else pin.layout();
   }
@@ -404,6 +419,8 @@
   function renderAll() {
     renderStaticLines();
     renderHero();
+    renderManifesto();
+    renderFaq();
     renderMarquee();
     renderServices();
     renderGallery();
@@ -458,9 +475,14 @@
   A.mountLangToggle();
   renderStaticLines();
   renderHero();
+  renderManifesto();
+  renderFaq();
   renderMarquee();
   FX.parallax();
-  FX.cursor();
+  FX.poleFly();
+  FX.bgMorph();
+  FX.stack($("steps"));
+  FX.spotlight();
   FX.magnetic();
   FX.hoverImage($("svcList"), ".svc", (item) => {
     if (!S.gallery.length) return null;
@@ -487,6 +509,7 @@
     FX.observe();
     FX.magnetic();
     document.dispatchEvent(new CustomEvent("site:ready"));
+    setTimeout(() => document.dispatchEvent(new CustomEvent("site:layout")), 300);
     setTimeout(findNextFree, 400);
   });
 })();
