@@ -90,7 +90,6 @@ window.I18N = {
     // gallery
     workKicker: "מהכיסא",
     workTitle: "עבודות אחרונות",
-    workSub: "לקוחות אמיתיים, צולמו במספרה.",
     dragHint: "גרור",
     of: "מתוך",
 
@@ -397,7 +396,6 @@ window.I18N = {
 
     workKicker: "From the chair",
     workTitle: "Recent work",
-    workSub: "Real clients, photographed in the shop.",
     dragHint: "Drag",
     of: "of",
 
