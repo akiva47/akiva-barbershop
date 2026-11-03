@@ -1069,6 +1069,110 @@
     flash("ok", t.saved);
   });
 
+  // ------------------------------------------------------------ notifications
+
+  function renderNotifyText() {
+    // These few strings carry links and <code>, so they are set as HTML. They
+    // come from i18n.js, never from user input.
+    document.querySelectorAll("[data-th]").forEach((el) => { el.innerHTML = A.t[el.getAttribute("data-th")] || ""; });
+  }
+
+  function setSwitch(id, on) { $(id).setAttribute("aria-checked", String(!!on)); }
+  function isOn(id) { return $(id).getAttribute("aria-checked") === "true"; }
+  ["ntNew", "ntCancel"].forEach((id) => $(id).addEventListener("click", () => setSwitch(id, !isOn(id))));
+
+  function renderNotifyState() {
+    const t = A.t;
+    const tg = $("tgToken").value.trim() && $("tgChat").value.trim();
+    const wa = $("waPhone").value.trim() && $("waKey").value.trim();
+    [["tgState", tg], ["waState", wa]].forEach(([id, on]) => {
+      $(id).textContent = on ? t.notifyOn : t.notifyOff;
+      $(id).classList.toggle("on", !!on);
+    });
+  }
+  ["tgToken", "tgChat", "waPhone", "waKey"].forEach((id) => $(id).addEventListener("input", renderNotifyState));
+
+  async function loadNotify() {
+    const { data, error } = await A.db.from("notify_settings").select("*").eq("id", 1).maybeSingle();
+    showMissing("notify", error);
+    const n = (!error && data) ? data : {};
+    $("tgToken").value = n.telegram_token || "";
+    $("tgChat").value = n.telegram_chat_id || "";
+    $("waPhone").value = n.wa_phone || "";
+    $("waKey").value = n.wa_apikey || "";
+    setSwitch("ntNew", n.on_new !== false);
+    setSwitch("ntCancel", n.on_cancel !== false);
+    renderNotifyState();
+  }
+
+  async function saveNotify(quiet) {
+    const t = A.t;
+    const row = {
+      id: 1,
+      telegram_token: $("tgToken").value.trim() || null,
+      telegram_chat_id: $("tgChat").value.trim() || null,
+      wa_phone: $("waPhone").value.replace(/\D/g, "") || null,
+      wa_apikey: $("waKey").value.trim() || null,
+      on_new: isOn("ntNew"),
+      on_cancel: isOn("ntCancel"),
+      updated_at: new Date().toISOString()
+    };
+    const { error } = await A.db.from("notify_settings").upsert(row, { onConflict: "id" });
+    if (error) { flash("error", isMissing(error) ? t.migrationMissing : A.errorText(error)); return false; }
+    if (!quiet) flash("ok", t.saved);
+    renderNotifyState();
+    return true;
+  }
+
+  $("saveNotify").addEventListener("click", async () => {
+    const btn = $("saveNotify");
+    busy(btn, true);
+    await saveNotify();
+    busy(btn, false);
+  });
+
+  // Telegram's API answers browsers directly, so the chat id can be read from
+  // the last message the admin sent to their own bot.
+  $("tgFind").addEventListener("click", async () => {
+    const t = A.t;
+    const token = $("tgToken").value.trim();
+    if (!token) { flash("error", t.tgNeedToken); $("tgToken").focus(); return; }
+    const btn = $("tgFind");
+    busy(btn, true);
+    try {
+      const res = await fetch("https://api.telegram.org/bot" + encodeURIComponent(token).replace(/%3A/gi, ":") + "/getUpdates");
+      const json = await res.json();
+      if (!json.ok) { flash("error", t.tgBadToken); return; }
+      const msgs = (json.result || []).map((u) => u.message || u.edited_message || u.my_chat_member).filter(Boolean);
+      const last = msgs[msgs.length - 1];
+      if (!last || !last.chat) { flash("error", t.tgNoMessage); return; }
+      $("tgChat").value = String(last.chat.id);
+      renderNotifyState();
+      flash("ok", t.tgFound);
+    } catch (e) {
+      flash("error", t.errGeneric);
+    } finally {
+      busy(btn, false);
+    }
+  });
+
+  $("testNotify").addEventListener("click", async () => {
+    const t = A.t;
+    const tg = $("tgToken").value.trim() && $("tgChat").value.trim();
+    const wa = $("waPhone").value.trim() && $("waKey").value.trim();
+    if (!tg && !wa) { flash("error", t.notifyNothing); return; }
+    const btn = $("testNotify");
+    busy(btn, true);
+    // Save first, so the test uses what is on the screen.
+    const ok = await saveNotify(true);
+    if (ok) {
+      const { error } = await A.db.rpc("notify_test");
+      if (error) flash("error", isMissing(error) ? t.migrationMissing : A.errorText(error));
+      else flash("ok", t.notifySent);
+    }
+    busy(btn, false);
+  });
+
   // ----------------------------------------------------------------- session
 
   async function enterAdmin() {
@@ -1083,7 +1187,8 @@
     await Promise.all([loadSite(), loadGallery()]);
     renderGallery();
     renderSite();
-    await Promise.all([loadDash(), loadDiary(), loadHours(), loadBreaks(), loadOverrides(), loadReviews(), loadSettings()]);
+    renderNotifyText();
+    await Promise.all([loadDash(), loadDiary(), loadHours(), loadBreaks(), loadOverrides(), loadReviews(), loadSettings(), loadNotify()]);
   }
 
   function showLogin() {
@@ -1131,6 +1236,7 @@
     fillServiceSelect();
     renderDash(); renderStrip(); renderDiary(); renderGallery(); renderServices();
     renderHours(); renderBreaks(); renderOverrides(); renderSite(); renderReviews();
+    renderNotifyText(); renderNotifyState();
   });
 
   A.mountLangToggle();
