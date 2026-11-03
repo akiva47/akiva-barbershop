@@ -301,36 +301,29 @@
 
   // ---------------------------------------------------------------- reviews
 
-  let rvTimer = null, rvIdx = 0;
+  // Three at a time; "more" opens the next three.
+  const RV_PAGE = 3;
+  let rvShown = RV_PAGE;
   function renderReviews() {
     const has = S.reviews.length > 0;
     $("reviews").classList.toggle("hidden", !has);
     if (!has) return;
-    $("rvStage").innerHTML = S.reviews.map((r, i) =>
-      '<figure class="rv' + (i === rvIdx ? " on" : "") + '">' +
-      '<div class="rv-stars" aria-label="' + r.rating + '/5">' + "★".repeat(r.rating) + "</div>" +
-      "<blockquote>" + A.esc(r.body) + "</blockquote><cite>" + A.esc(r.author) + "</cite></figure>").join("");
-    $("rvDots").innerHTML = S.reviews.length > 1 ? S.reviews.map((_, i) =>
-      '<button type="button" aria-label="' + (i + 1) + '"' + (i === rvIdx ? ' class="on"' : "") + "></button>").join("") : "";
-    $("rvDots").querySelectorAll("button").forEach((b, i) => b.addEventListener("click", () => rvGo(i)));
-    rvSchedule();
+    $("rvStage").innerHTML = S.reviews.map((r, i) => {
+      const initial = A.esc(String(r.author || "?").trim().charAt(0));
+      return '<figure class="rv' + (i < rvShown ? "" : " hidden") + '" data-reveal data-spot style="--d:' + ((i % RV_PAGE) * 0.08) + 's">' +
+        '<figcaption class="rv-who"><span class="rv-avatar" aria-hidden="true">' + initial + "</span>" +
+        "<cite>" + A.esc(r.author) + "</cite></figcaption>" +
+        '<div class="rv-stars" aria-label="' + r.rating + '/5">' + "★".repeat(r.rating) + '<span class="rv-off">' + "★".repeat(5 - r.rating) + "</span></div>" +
+        "<blockquote>" + A.esc(r.body) + "</blockquote></figure>";
+    }).join("");
+    $("rvMore").classList.toggle("hidden", S.reviews.length <= rvShown);
+    FX.observe($("rvStage"));
   }
-  function rvGo(i) {
-    const items = $("rvStage").children;
-    const dots = $("rvDots").children;
-    if (!items.length) return;
-    rvIdx = (i + items.length) % items.length;
-    Array.prototype.forEach.call(items, (el, k) => el.classList.toggle("on", k === rvIdx));
-    Array.prototype.forEach.call(dots, (el, k) => {
-      el.classList.remove("on");
-      if (k === rvIdx) { void el.offsetWidth; el.classList.add("on"); }
-    });
-    rvSchedule();
-  }
-  function rvSchedule() {
-    clearTimeout(rvTimer);
-    if (S.reviews.length > 1) rvTimer = setTimeout(() => rvGo(rvIdx + 1), 6000);
-  }
+  $("rvMore").addEventListener("click", () => {
+    rvShown += RV_PAGE;
+    renderReviews();
+    document.dispatchEvent(new CustomEvent("site:layout"));
+  });
 
   // ------------------------------------------------------------------ about
 

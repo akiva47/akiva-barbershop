@@ -3,6 +3,27 @@
 (function () {
   "use strict";
 
+  // GitHub Pages lets browsers keep a page for ten minutes, and a site saved to
+  // the iPhone home screen holds on far longer, so a fresh deploy can go unseen.
+  // Each page carries its build number; ask the server for the current one
+  // (bypassing every cache) and, if it moved on, load the new page once.
+  (function freshness() {
+    const meta = document.querySelector('meta[name="build"]');
+    if (!meta || !window.fetch) return;
+    fetch(location.pathname + "?build-check=" + Date.now(), { cache: "no-store" })
+      .then((r) => (r.ok ? r.text() : ""))
+      .then((html) => {
+        const m = /<meta name="build" content="(\d+)"/.exec(html);
+        if (!m || m[1] === meta.content) return;
+        const key = "bb.build." + m[1];
+        try { if (sessionStorage.getItem(key)) return; sessionStorage.setItem(key, "1"); } catch (e) { return; }
+        const u = new URL(location.href);
+        u.searchParams.set("v", m[1]);     // a new address is never served from cache
+        location.replace(u.toString());
+      })
+      .catch(() => {});
+  })();
+
   const cfg = window.CONFIG || {};
   const configured =
     cfg.SUPABASE_URL &&

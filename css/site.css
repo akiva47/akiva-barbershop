@@ -338,18 +338,16 @@ body.is-loading .pole-fly { opacity: 0; }
 @media (min-width: 760px) { .stats { grid-template-columns: repeat(3, 1fr); } .stat { border-bottom: 0; border-inline-end: 1px solid var(--line); } .stat:last-child { border-inline-end: 0; } }
 
 /* ----------------------------------------------------------------- reviews */
-.rv-stage { position: relative; min-height: 260px; display: grid; }
-.rv { grid-area: 1 / 1; max-width: 960px; margin: 0; opacity: 0; transform: translateY(30px); transition: opacity .9s var(--ease), transform 1.1s var(--ease); pointer-events: none; }
-.rv.on { opacity: 1; transform: none; pointer-events: auto; }
-.rv-stars { color: var(--lime); letter-spacing: .25em; font-size: 18px; margin-bottom: 16px; }
-.rv blockquote { margin: 0; font-family: var(--f-display); font-size: clamp(26px, 3.8vw, 50px); line-height: 1.2; font-weight: 700; letter-spacing: -.02em; }
-.rv cite { display: block; margin-top: 22px; font-style: normal; color: var(--ink-2); font-weight: 700; }
-.rv cite::before { content: "— "; color: var(--lime); }
-.rv-dots { display: flex; gap: 8px; margin-top: 34px; }
-.rv-dots button { width: 36px; height: 3px; border-radius: 3px; background: var(--line-2); position: relative; overflow: hidden; }
-.rv-dots button.on::after { content: ""; position: absolute; inset: 0; background: var(--lime); transform-origin: var(--origin, left); animation: fillbar 6s linear forwards; }
-[dir="rtl"] .rv-dots button.on::after { --origin: right; }
-@keyframes fillbar { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.rv-grid { display: grid; gap: 16px; grid-template-columns: 1fr; max-width: 1200px; }
+@media (min-width: 760px) { .rv-grid { grid-template-columns: repeat(3, 1fr); } }
+.rv { position: relative; margin: 0; padding: 24px; border-radius: var(--r); background: var(--bg-2); border: 1px solid var(--line); display: flex; flex-direction: column; gap: 14px; }
+.rv-who { display: flex; align-items: center; gap: 12px; }
+.rv-avatar { width: 48px; height: 48px; border-radius: 50%; flex: none; display: grid; place-items: center; background: var(--blue); color: #fff; font-family: var(--f-display); font-weight: 800; font-size: 22px; }
+.rv cite { font-style: normal; font-family: var(--f-display); font-weight: 800; font-size: clamp(22px, 2.6vw, 28px); line-height: 1.1; letter-spacing: -.02em; color: var(--ink); }
+.rv-stars { color: var(--lime); letter-spacing: .15em; font-size: 15px; line-height: 1; }
+.rv-off { color: var(--line-2); }
+.rv blockquote { margin: 0; font-size: 16px; line-height: 1.6; color: var(--ink-2); font-weight: 400; }
+.rv-more { margin-top: 26px; }
 
 /* ------------------------------------------------------------------- about */
 .about { display: grid; gap: clamp(40px, 6vw, 90px); align-items: start; }
