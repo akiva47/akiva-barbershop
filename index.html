@@ -4,119 +4,335 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="המספרה של עקיבא">
-<meta name="theme-color" content="#FAF7F1" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#16130F" media="(prefers-color-scheme: dark)">
-<meta name="description" content="קביעת תור למספרה של עקיבא">
+<meta name="theme-color" content="#0A0908">
+<meta name="description" content="המספרה של עקיבא. תספורות, פיידים וסידור זקן. קביעת תור אונליין.">
+<meta property="og:title" content="המספרה של עקיבא">
+<meta property="og:description" content="תספורות, פיידים וסידור זקן. קובעים תור אונליין.">
+<meta property="og:image" content="assets/icon-512.png">
 <title>המספרה של עקיבא</title>
 <link rel="apple-touch-icon" href="assets/icon-180.png">
 <link rel="icon" type="image/png" href="assets/icon-192.png">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&family=Suez+One&display=swap">
-<link rel="stylesheet" href="css/app.css?v=202611012007">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800&family=Karantina:wght@400;700&display=swap">
+<link rel="stylesheet" href="css/site.css?v=202611031009">
 </head>
-<body>
+<body class="site is-loading">
 
-<div class="wrap">
+<!-- ============================== preloader ============================== -->
+<div class="preloader" id="preloader" aria-hidden="true">
+  <div class="pl-pole"><span></span></div>
+  <div class="pl-count"><span id="plCount">0</span><small>%</small></div>
+  <div class="pl-brand" data-t="brand">עקיבא</div>
+  <div class="pl-curtain"></div>
+</div>
 
-  <header class="masthead">
-    <div class="pole" aria-hidden="true"></div>
-    <h1 class="shop-name" data-t="shopName">המספרה של עקיבא</h1>
+<div class="grain" aria-hidden="true"></div>
+<div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+<div class="cursor" aria-hidden="true"><span class="cursor-ring"><em id="cursorLabel"></em></span><span class="cursor-dot"></span></div>
+<div class="hover-img" id="hoverImg" aria-hidden="true"><img alt=""></div>
+
+<!-- ================================= nav ================================= -->
+<header class="nav" id="nav">
+  <a class="logo" href="#top" aria-label="home">
+    <span class="logo-pole"></span>
+    <span class="logo-text"><b data-t="brand">עקיבא</b><small data-t="brandSub">BARBERSHOP</small></span>
+  </a>
+  <nav class="nav-links" aria-label="sections">
+    <a href="#services" data-t="navServices">שירותים</a>
+    <a href="#work" data-t="navWork" class="needs-gallery">עבודות</a>
+    <a href="#about" data-t="navAbout">עליי</a>
+    <a href="#contact" data-t="navContact">צור קשר</a>
+  </nav>
+  <div class="nav-end">
     <div class="lang-toggle" role="group" aria-label="Language">
       <button type="button" data-lang-btn="he" aria-pressed="true">עב</button>
       <button type="button" data-lang-btn="en" aria-pressed="false">EN</button>
     </div>
-  </header>
-
-  <div id="topNotice" class="notice notice-error hidden"></div>
-
-  <!-- ============================ booking flow ============================ -->
-  <div id="flow">
-
-    <section class="card">
-      <div class="step-head">
-        <span class="step-num">1</span>
-        <h2 class="step-title" data-t="step1">בחר שירות</h2>
-      </div>
-      <div class="services" id="services">
-        <div class="spinner" aria-label="loading"></div>
-      </div>
-    </section>
-
-    <section class="card" id="dayCard">
-      <div class="step-head">
-        <span class="step-num">2</span>
-        <h2 class="step-title" data-t="step2">בחר יום</h2>
-      </div>
-      <div class="days" id="days"></div>
-    </section>
-
-    <section class="card" id="timeCard">
-      <div class="step-head">
-        <span class="step-num">3</span>
-        <h2 class="step-title" data-t="step3">בחר שעה</h2>
-        <span class="step-hint" id="dayLabel"></span>
-      </div>
-      <div class="slots" id="slots"></div>
-      <div class="empty hidden" id="slotsEmpty" data-t="pickServiceFirst">בחר שירות כדי לראות שעות פנויות</div>
-    </section>
-
-    <section class="card hidden" id="detailsCard">
-      <div class="step-head">
-        <span class="step-num">4</span>
-        <h2 class="step-title" data-t="step4">הפרטים שלך</h2>
-      </div>
-      <div class="notice notice-quiet" id="summary" style="margin-block-end:14px"></div>
-      <form id="bookForm" novalidate>
-        <div class="field">
-          <label for="cName" data-t="name">שם מלא</label>
-          <input id="cName" type="text" autocomplete="name" maxlength="60"
-                 data-t-ph="namePlaceholder" placeholder="איך קוראים לך?" required>
-        </div>
-        <div class="field">
-          <label for="cPhone" data-t="phone">טלפון</label>
-          <input id="cPhone" type="tel" autocomplete="tel" maxlength="25"
-                 data-t-ph="phonePlaceholder" placeholder="050-0000000" required>
-        </div>
-        <div class="field">
-          <label for="cNote" data-t="note">הערה (לא חובה)</label>
-          <input id="cNote" type="text" maxlength="200"
-                 data-t-ph="notePlaceholder" placeholder="משהו שכדאי שאדע?">
-        </div>
-        <div id="formNotice" class="notice notice-error hidden" style="margin-block-end:11px"></div>
-        <button class="btn" type="submit" id="bookBtn" data-t="book">קבע תור</button>
-      </form>
-    </section>
-
+    <button type="button" class="btn btn-gold btn-sm nav-book" data-book data-magnetic><span data-t="bookNow">קבע תור</span></button>
+    <button type="button" class="burger" id="burger" aria-label="menu" aria-expanded="false"><span></span><span></span></button>
   </div>
+</header>
 
-  <!-- ============================ confirmation ============================ -->
-  <section class="card hidden" id="done">
-    <h2 class="step-title" style="font-size:21px" data-t="confirmedTitle">התור נקבע</h2>
-    <p style="color:var(--ink-2);margin-block:6px 14px" data-t="confirmedBody">נתראה!</p>
-    <div class="notice notice-ok" id="doneSummary" style="margin-block-end:14px"></div>
-    <p class="step-hint" data-t="saveThisLink">שמור את הקישור הזה — דרכו אפשר לבטל את התור</p>
-    <div class="inline" style="margin-block:10px 14px">
-      <input id="cancelLink" type="text" readonly
-             style="flex:1;min-width:0;font-size:13px;background:var(--sunken);border:1px solid var(--line);border-radius:9px;padding:9px">
-      <button class="btn" style="width:auto" id="copyBtn" type="button" data-t="copyLink">העתק קישור</button>
+<div class="menu" id="menu" aria-hidden="true">
+  <div class="menu-bg"></div>
+  <nav class="menu-links">
+    <a href="#services"><i>01</i><span data-t="navServices">שירותים</span></a>
+    <a href="#work" class="needs-gallery"><i>02</i><span data-t="navWork">עבודות</span></a>
+    <a href="#about"><i>03</i><span data-t="navAbout">עליי</span></a>
+    <a href="#contact"><i>04</i><span data-t="navContact">צור קשר</span></a>
+    <a href="#" data-mine><i>05</i><span data-t="navMyAppts">התורים שלי</span></a>
+  </nav>
+  <div class="menu-foot">
+    <div class="lang-toggle" role="group" aria-label="Language">
+      <button type="button" data-lang-btn="he" aria-pressed="true">עב</button>
+      <button type="button" data-lang-btn="en" aria-pressed="false">EN</button>
     </div>
-    <button class="btn btn-quiet" id="againBtn" type="button" data-t="bookAnother">לקבוע תור נוסף</button>
-  </section>
-
-  <a class="btn btn-bit hidden" id="bitBtn" href="#" target="_blank" rel="noopener noreferrer"
-     data-t="payBit">לתשלום בביט</a>
-
-  <p class="foot"><a href="admin.html" data-t="adminTitle">ניהול</a></p>
+    <div class="menu-social" id="menuSocial"></div>
+  </div>
 </div>
 
-<script src="js/supabase.js?v=202611012007"></script>
-<script src="js/config.js?v=202611012007"></script>
-<script src="js/i18n.js?v=202611012007"></script>
-<script src="js/common.js?v=202611012007"></script>
-<script src="js/booking.js?v=202611012007"></script>
+<main id="top">
+
+  <!-- ================================ hero ================================ -->
+  <section class="hero" id="hero">
+    <div class="hero-bg">
+      <img id="heroImg" class="hero-img hidden" alt="" data-parallax="0.25">
+      <div class="hero-glow" aria-hidden="true"></div>
+      <div class="hero-word" aria-hidden="true" data-parallax="-0.35"><span>AKIVA</span><span>AKIVA</span></div>
+      <div class="hero-pole-wrap" aria-hidden="true" data-parallax="0.15">
+        <div class="pole3d">
+          <div class="pole3d-cap top"></div>
+          <div class="pole3d-glass"><div class="pole3d-stripes"></div></div>
+          <div class="pole3d-cap bottom"></div>
+        </div>
+      </div>
+      <div class="hero-shade"></div>
+    </div>
+
+    <div class="hero-inner">
+      <button type="button" class="next-free" id="nextFree" data-book>
+        <span class="pulse"></span>
+        <span class="nf-label" data-t="nextFree">התור הפנוי הבא</span>
+        <b id="nextFreeTime">…</b>
+      </button>
+      <h1 class="hero-title" id="heroTitle" data-lines></h1>
+      <p class="hero-sub" id="heroSub" data-reveal style="--d:.5s"></p>
+      <div class="hero-ctas" data-reveal style="--d:.65s">
+        <button type="button" class="btn btn-gold btn-lg" data-book data-magnetic>
+          <span data-t="bookNow">קבע תור</span>
+          <svg viewBox="0 0 24 24" class="arr" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+        <a href="#work" class="btn btn-ghost btn-lg needs-gallery" data-magnetic><span data-t="heroSeeWork">לעבודות שלי</span></a>
+      </div>
+    </div>
+
+    <a href="#services" class="hero-scroll" aria-label="scroll"><span data-t="scroll">גלול</span><i></i></a>
+  </section>
+
+  <!-- =============================== marquee ============================== -->
+  <div class="marquee" id="marquee" aria-hidden="true"><div class="marquee-track" id="marqueeTrack"></div></div>
+
+  <!-- ============================== services ============================== -->
+  <section class="section" id="services">
+    <div class="sec-head">
+      <span class="kicker" data-reveal><i>01</i><span data-t="servicesKicker">מה עושים</span></span>
+      <h2 class="sec-title" data-lines data-t-lines="servicesTitle">השירותים</h2>
+      <p class="sec-sub" data-reveal data-t="servicesSub">בחר שירות והתור שלך כבר בדרך</p>
+    </div>
+    <div class="svc-list" id="svcList">
+      <div class="svc-skel"></div><div class="svc-skel"></div><div class="svc-skel"></div>
+    </div>
+  </section>
+
+  <!-- =============================== gallery ============================== -->
+  <section class="work hidden" id="work">
+    <div class="work-pin" id="workPin">
+      <div class="work-sticky">
+        <div class="sec-head work-head">
+          <span class="kicker" data-reveal><i>02</i><span data-t="workKicker">פורטפוליו</span></span>
+          <h2 class="sec-title" data-lines data-t-lines="workTitle">העבודות שלי</h2>
+          <p class="sec-sub" data-reveal data-t="workSub"></p>
+        </div>
+        <div class="work-track" id="workTrack"></div>
+        <div class="work-count" aria-hidden="true"><b id="workIdx">01</b><span>/</span><span id="workTotal">01</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================ stats =============================== -->
+  <section class="stats hidden" id="stats">
+    <div class="stat" data-reveal><b data-count="0" id="statYears">0</b><span data-t="statYears">שנות ניסיון</span></div>
+    <div class="stat" data-reveal style="--d:.1s"><b data-count="0" id="statClients">0</b><span data-t="statClients">לקוחות מרוצים</span></div>
+    <div class="stat" data-reveal style="--d:.2s"><b data-count="0" id="statCuts">0</b><span data-t="statCuts">תספורות</span></div>
+  </section>
+
+  <!-- ============================ testimonials ============================ -->
+  <section class="section reviews hidden" id="reviews">
+    <div class="sec-head">
+      <span class="kicker" data-reveal><i>03</i><span data-t="reviewsKicker">מה אומרים</span></span>
+      <h2 class="sec-title" data-lines data-t-lines="reviewsTitle">לקוחות מספרים</h2>
+    </div>
+    <div class="rv-stage" id="rvStage"></div>
+    <div class="rv-dots" id="rvDots"></div>
+  </section>
+
+  <!-- ================================ about =============================== -->
+  <section class="section about" id="about">
+    <div class="about-media" data-reveal="clip">
+      <img id="aboutImg" class="hidden" alt="" data-parallax="0.12">
+      <div class="about-art" id="aboutArt" aria-hidden="true">
+        <svg viewBox="0 0 200 200"><g fill="none" stroke="currentColor" stroke-width="3">
+          <circle cx="62" cy="150" r="22"/><circle cx="138" cy="150" r="22"/>
+          <path d="M76 133 L150 30 M124 133 L50 30"/></g></svg>
+      </div>
+      <span class="about-badge" aria-hidden="true"><b data-t="brand">עקיבא</b><small>BARBER</small></span>
+    </div>
+    <div class="about-body">
+      <span class="kicker" data-reveal><i>04</i><span data-t="aboutKicker">מי אני</span></span>
+      <h2 class="sec-title" data-lines id="aboutTitle"></h2>
+      <p class="about-text" id="aboutText" data-reveal></p>
+
+      <div class="hours" id="contact" data-reveal>
+        <div class="hours-head">
+          <h3 data-t="hoursTitle">שעות פתיחה</h3>
+          <span class="open-badge" id="openBadge"></span>
+        </div>
+        <ul class="hours-list" id="hoursList"></ul>
+      </div>
+
+      <div class="contact-row" id="contactRow" data-reveal></div>
+      <p class="address" id="address"></p>
+    </div>
+  </section>
+
+  <!-- ================================= cta ================================ -->
+  <section class="cta" id="cta">
+    <div class="cta-pole" aria-hidden="true"></div>
+    <h2 class="cta-title" data-lines data-t-lines="ctaBig"></h2>
+    <p class="cta-sub" data-reveal data-t="ctaSub">התור הבא שלך במרחק שתי לחיצות</p>
+    <button type="button" class="btn btn-gold btn-xl" data-book data-magnetic data-reveal>
+      <span data-t="bookNow">קבע תור</span>
+      <svg viewBox="0 0 24 24" class="arr" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </button>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-word" aria-hidden="true" data-t="brand">עקיבא</div>
+    <div class="footer-row">
+      <span>© <span id="year"></span> <span data-t="shopName">המספרה של עקיבא</span></span>
+      <span class="footer-links">
+        <a href="#" data-mine data-t="navMyAppts">התורים שלי</a>
+        <a href="admin.html" data-t="adminTitle">ניהול</a>
+      </span>
+    </div>
+  </footer>
+</main>
+
+<!-- mobile sticky booking bar -->
+<div class="dock" id="dock">
+  <button type="button" class="btn btn-gold dock-book" data-book><span data-t="bookNow">קבע תור</span></button>
+  <a class="dock-btn dock-wa hidden" id="dockWa" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true" class="wa-ico"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 12 12 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg></a>
+  <a class="dock-btn hidden" id="dockBit" target="_blank" rel="noopener noreferrer" aria-label="Bit">bit</a>
+  <button type="button" class="dock-btn" data-mine aria-label="my bookings">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>
+  </button>
+</div>
+
+<!-- desktop WhatsApp button -->
+<a class="wa-fab hidden" id="waFab" target="_blank" rel="noopener noreferrer" data-magnetic><svg viewBox="0 0 24 24" aria-hidden="true" class="wa-ico"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.9c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 12 12 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg><span data-t="waChat">שלחו הודעה בוואטסאפ</span></a>
+
+<!-- ============================ booking sheet ============================ -->
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="sheetTitle">
+  <div class="sheet-inner">
+    <header class="sheet-head">
+      <button type="button" class="icon-btn" id="sheetBack" aria-label="back">
+        <svg viewBox="0 0 24 24" class="flip"><path d="M15 6l-6 6 6 6"/></svg>
+      </button>
+      <div class="sheet-titles">
+        <small id="sheetStep"></small>
+        <h2 id="sheetTitle"></h2>
+      </div>
+      <button type="button" class="icon-btn" id="sheetClose" aria-label="close">
+        <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </header>
+    <div class="sheet-progress"><span id="sheetProgress"></span></div>
+
+    <div class="sheet-body" id="sheetBody">
+      <div id="sheetNotice" class="notice notice-error hidden"></div>
+
+      <!-- 1 service -->
+      <div class="pane" data-pane="svc">
+        <div class="pick-list" id="pickServices"></div>
+      </div>
+
+      <!-- 2 day + time -->
+      <div class="pane" data-pane="time">
+        <div class="chosen" id="chosenSvc"></div>
+        <div class="month-label" id="monthLabel"></div>
+        <div class="days" id="days"></div>
+        <div class="slots-wrap">
+          <div class="slots" id="slots"></div>
+          <div class="empty hidden" id="slotsEmpty"></div>
+        </div>
+      </div>
+
+      <!-- 3 details -->
+      <div class="pane" data-pane="details">
+        <div class="ticket mini" id="summary"></div>
+        <form id="bookForm" novalidate autocomplete="on">
+          <label class="fl">
+            <input id="cName" type="text" autocomplete="name" maxlength="60" placeholder=" " required>
+            <span data-t="name">שם מלא</span>
+          </label>
+          <label class="fl">
+            <input id="cPhone" type="tel" inputmode="tel" autocomplete="tel" maxlength="25" placeholder=" " required>
+            <span data-t="phone">טלפון</span>
+          </label>
+          <label class="fl">
+            <input id="cNote" type="text" maxlength="200" placeholder=" ">
+            <span data-t="note">הערה (לא חובה)</span>
+          </label>
+          <label class="check">
+            <input type="checkbox" id="cRemember" checked>
+            <span class="check-box"></span>
+            <span data-t="rememberMe">זכור את הפרטים שלי במכשיר הזה</span>
+          </label>
+          <div id="formNotice" class="notice notice-error hidden"></div>
+          <button class="btn btn-gold btn-lg btn-block" type="submit" id="bookBtn"><span data-t="book">קבע תור</span></button>
+        </form>
+      </div>
+
+      <!-- done -->
+      <div class="pane" data-pane="done">
+        <canvas class="confetti" id="confetti"></canvas>
+        <div class="done-check">
+          <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52"/><path d="M38 62 l15 15 l30 -34"/></svg>
+        </div>
+        <h3 class="done-title" data-t="confirmedTitle">התור נקבע!</h3>
+        <p class="done-sub" data-t="confirmedBody">נתראה בכיסא.</p>
+        <div class="ticket" id="doneTicket"></div>
+        <div class="done-actions">
+          <button type="button" class="btn btn-gold btn-block" id="icsBtn">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>
+            <span data-t="addToCalendar">הוסף ליומן</span></button>
+          <a class="btn btn-bit btn-block hidden" id="doneBit" target="_blank" rel="noopener noreferrer"><span data-t="payBit">לתשלום בביט</span></a>
+          <button type="button" class="btn btn-ghost btn-block" id="copyBtn"><span data-t="copyLink">העתק קישור ביטול</span></button>
+        </div>
+        <p class="fine" data-t="saveThisLink"></p>
+        <input id="cancelLink" type="text" readonly class="link-field" aria-label="cancel link">
+        <button type="button" class="btn btn-text" id="againBtn"><span data-t="bookAnother">לקבוע תור נוסף</span></button>
+      </div>
+
+      <!-- my bookings -->
+      <div class="pane" data-pane="mine">
+        <p class="fine" data-t="myApptsNote"></p>
+        <div class="mine-list" id="mineList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =============================== lightbox ============================== -->
+<div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true">
+  <button type="button" class="icon-btn lb-close" id="lbClose" aria-label="close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  <button type="button" class="icon-btn lb-prev" id="lbPrev" aria-label="previous"><svg viewBox="0 0 24 24" class="flip"><path d="M15 6l-6 6 6 6"/></svg></button>
+  <figure class="lb-fig"><img id="lbImg" alt=""><figcaption id="lbCap"></figcaption></figure>
+  <button type="button" class="icon-btn lb-next" id="lbNext" aria-label="next"><svg viewBox="0 0 24 24" class="flip"><path d="M9 6l6 6-6 6"/></svg></button>
+  <div class="lb-count" id="lbCount"></div>
+</div>
+
+<script src="js/supabase.js?v=202611031009"></script>
+<script src="js/config.js?v=202611031009"></script>
+<script src="js/i18n.js?v=202611031009"></script>
+<script src="js/common.js?v=202611031009"></script>
+<script src="js/fx.js?v=202611031009"></script>
+<script src="js/site.js?v=202611031009"></script>
+<script src="js/booking.js?v=202611031009"></script>
 </body>
 </html>

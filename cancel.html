@@ -3,47 +3,49 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#FAF7F1" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#16130F" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#0A0908">
 <meta name="robots" content="noindex">
 <title>המספרה של עקיבא</title>
 <link rel="apple-touch-icon" href="assets/icon-180.png">
 <link rel="icon" type="image/png" href="assets/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&family=Suez+One&display=swap">
-<link rel="stylesheet" href="css/app.css?v=202611012007">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800&family=Karantina:wght@400;700&display=swap">
+<link rel="stylesheet" href="css/site.css?v=202611031009">
 </head>
-<body>
+<body class="solo-page">
 
-<div class="wrap">
-  <header class="masthead">
-    <div class="pole" aria-hidden="true"></div>
-    <h1 class="shop-name" data-t="shopName">המספרה של עקיבא</h1>
-    <div class="lang-toggle" role="group" aria-label="Language">
-      <button type="button" data-lang-btn="he" aria-pressed="true">עב</button>
-      <button type="button" data-lang-btn="en" aria-pressed="false">EN</button>
+<div class="grain" aria-hidden="true"></div>
+
+<div class="solo">
+  <div class="hero-glow" aria-hidden="true"></div>
+  <section class="solo-card">
+    <div class="solo-top">
+      <a class="logo" href="index.html">
+        <span class="logo-pole"></span>
+        <span class="logo-text"><b data-t="brand">עקיבא</b><small data-t="brandSub">BARBERSHOP</small></span>
+      </a>
+      <div class="lang-toggle" role="group" aria-label="Language">
+        <button type="button" data-lang-btn="he" aria-pressed="true">עב</button>
+        <button type="button" data-lang-btn="en" aria-pressed="false">EN</button>
+      </div>
     </div>
-  </header>
 
-  <section class="card">
-    <h2 class="step-title" style="font-size:20px;margin-block-end:12px" data-t="cancelTitle">התור שלך</h2>
+    <h1 data-t="cancelTitle">התור שלך</h1>
     <div id="loading" class="spinner"></div>
-    <div id="notice" class="notice hidden"></div>
+    <div id="notice" class="notice hidden" style="margin-top:14px"></div>
     <div id="details" class="hidden">
-      <div class="notice notice-quiet" id="apptSummary" style="margin-block-end:14px"></div>
-      <button class="btn btn-danger" id="cancelBtn" type="button" data-t="cancelBtn">בטל את התור</button>
+      <div class="ticket" id="apptSummary"></div>
+      <button class="btn btn-danger btn-lg btn-block" id="cancelBtn" type="button"><span data-t="cancelBtn">בטל את התור</span></button>
     </div>
-    <p style="margin-block-start:16px;text-align:center">
-      <a href="index.html" style="color:var(--ink-3);font-size:14px" data-t="bookAnother">לקבוע תור נוסף</a>
-    </p>
+    <a href="index.html#book" class="btn btn-gold btn-block" style="margin-top:12px"><span data-t="bookAnother">לקבוע תור נוסף</span></a>
   </section>
 </div>
 
-<script src="js/supabase.js?v=202611012007"></script>
-<script src="js/config.js?v=202611012007"></script>
-<script src="js/i18n.js?v=202611012007"></script>
-<script src="js/common.js?v=202611012007"></script>
-<script src="js/cancel.js?v=202611012007"></script>
+<script src="js/supabase.js?v=202611031009"></script>
+<script src="js/config.js?v=202611031009"></script>
+<script src="js/i18n.js?v=202611031009"></script>
+<script src="js/common.js?v=202611031009"></script>
+<script src="js/cancel.js?v=202611031009"></script>
 </body>
 </html>

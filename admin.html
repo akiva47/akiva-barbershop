@@ -4,128 +4,252 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="ניהול">
-<meta name="theme-color" content="#FAF7F1" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#16130F" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#0A0908">
 <meta name="robots" content="noindex">
 <title>ניהול</title>
 <link rel="apple-touch-icon" href="assets/icon-180.png">
 <link rel="icon" type="image/png" href="assets/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&family=Suez+One&display=swap">
-<link rel="stylesheet" href="css/app.css?v=202611012007">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800&family=Karantina:wght@400;700&display=swap">
+<link rel="stylesheet" href="css/site.css?v=202611031009">
+<link rel="stylesheet" href="css/admin.css?v=202611031009">
 </head>
-<body>
+<body class="admin">
 
-<div class="wrap">
+<div class="grain" aria-hidden="true"></div>
 
-  <header class="masthead">
-    <div class="pole" aria-hidden="true"></div>
-    <h1 class="shop-name"><span data-t="shopName">המספרה של עקיבא</span></h1>
-    <div class="lang-toggle" role="group" aria-label="Language">
-      <button type="button" data-lang-btn="he" aria-pressed="true">עב</button>
-      <button type="button" data-lang-btn="en" aria-pressed="false">EN</button>
+<!-- =============================== sign in =============================== -->
+<section class="login hidden" id="loginCard">
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="login-card">
+    <div class="login-pole" aria-hidden="true"><div class="pole3d"><div class="pole3d-cap top"></div><div class="pole3d-glass"><div class="pole3d-stripes"></div></div><div class="pole3d-cap bottom"></div></div></div>
+    <div class="login-top">
+      <span class="kicker" data-t="adminTitle">ניהול</span>
+      <div class="lang-toggle" role="group" aria-label="Language">
+        <button type="button" data-lang-btn="he" aria-pressed="true">עב</button>
+        <button type="button" data-lang-btn="en" aria-pressed="false">EN</button>
+      </div>
     </div>
-  </header>
-
-  <!-- =============================== sign in =============================== -->
-  <section class="card" id="loginCard">
-    <h2 class="step-title" style="margin-block-end:14px" data-t="adminTitle">ניהול</h2>
+    <h1 class="login-title"><span data-t="brand">עקיבא</span></h1>
     <form id="loginForm" novalidate>
-      <div class="field">
-        <label for="email" data-t="email">אימייל</label>
-        <input id="email" type="email" autocomplete="username" required>
-      </div>
-      <div class="field">
-        <label for="password" data-t="password">סיסמה</label>
-        <input id="password" type="password" autocomplete="current-password" required>
-      </div>
-      <div id="loginNotice" class="notice notice-error hidden" style="margin-block-end:11px"></div>
-      <button class="btn" type="submit" id="loginBtn" data-t="signIn">התחבר</button>
+      <label class="fl">
+        <input id="email" type="email" autocomplete="username" placeholder=" " required>
+        <span data-t="email">אימייל</span>
+      </label>
+      <label class="fl">
+        <input id="password" type="password" autocomplete="current-password" placeholder=" " required>
+        <span data-t="password">סיסמה</span>
+      </label>
+      <div id="loginNotice" class="notice notice-error hidden"></div>
+      <button class="btn btn-gold btn-lg btn-block" type="submit" id="loginBtn"><span data-t="signIn">התחבר</span></button>
     </form>
-  </section>
-
-  <!-- ============================== admin app ============================== -->
-  <div id="adminApp" class="hidden stack">
-
-    <div class="tabs" role="tablist">
-      <button role="tab" data-tab="diary"    aria-selected="true"  data-t="tabToday">היומן</button>
-      <button role="tab" data-tab="hours"    aria-selected="false" data-t="tabHours">שעות עבודה</button>
-      <button role="tab" data-tab="breaks"   aria-selected="false" data-t="tabBreaks">הפסקות</button>
-      <button role="tab" data-tab="days"     aria-selected="false" data-t="tabDays">ימים חריגים</button>
-      <button role="tab" data-tab="services" aria-selected="false" data-t="tabServices">שירותים</button>
-    </div>
-
-    <div id="adminNotice" class="notice hidden"></div>
-
-    <!-- diary -->
-    <section class="card" data-panel="diary">
-      <div class="inline" style="margin-block-end:12px">
-        <button class="btn btn-quiet" style="width:auto" id="prevDay" type="button">‹</button>
-        <input type="date" id="diaryDate" style="flex:1;min-width:0;font:inherit;font-size:15px;color:var(--ink);background:var(--sunken);border:1px solid var(--line);border-radius:9px;padding:8px 10px">
-        <button class="btn btn-quiet" style="width:auto" id="nextDay" type="button">›</button>
-      </div>
-      <div id="diaryList"></div>
-    </section>
-
-    <!-- weekly opening hours -->
-    <section class="card hidden" data-panel="hours">
-      <div id="hoursList"></div>
-      <div id="hoursNotice" class="notice hidden" style="margin-block-start:12px"></div>
-      <button class="btn" id="saveHours" type="button" style="margin-block-start:10px" data-t="save">שמור</button>
-    </section>
-
-    <!-- breaks -->
-    <section class="card hidden" data-panel="breaks">
-      <div id="breaksList"></div>
-      <div class="row" style="margin-block-start:8px">
-        <select id="breakWeekday" style="font:inherit;font-size:15px;color:var(--ink);background:var(--sunken);border:1px solid var(--line);border-radius:9px;padding:7px 9px"></select>
-        <input type="time" id="breakStart" value="13:00">
-        <input type="time" id="breakEnd" value="14:00">
-        <button class="btn" style="width:auto" id="addBreak" type="button" data-t="addBreak">הוסף הפסקה</button>
-      </div>
-    </section>
-
-    <!-- special days -->
-    <section class="card hidden" data-panel="days">
-      <div id="daysList"></div>
-      <div class="row" style="margin-block-start:8px">
-        <input type="date" id="ovDate">
-        <label class="inline" style="gap:6px;font-size:14px">
-          <button class="switch" id="ovClosed" type="button" role="switch" aria-checked="true"></button>
-          <span data-t="dayClosed">סגור כל היום</span>
-        </label>
-        <input type="time" id="ovOpen" value="09:00" class="hidden">
-        <input type="time" id="ovClose" value="19:00" class="hidden">
-        <button class="btn" style="width:auto" id="addOverride" type="button" data-t="addDayOff">הוסף יום חריג</button>
-      </div>
-    </section>
-
-    <!-- services -->
-    <section class="card hidden" data-panel="services">
-      <div id="servicesList"></div>
-      <button class="btn" id="saveServices" type="button" style="margin-block-start:14px" data-t="save">שמור</button>
-      <div class="row" style="margin-block-start:10px">
-        <input type="text" id="newSvcHe" data-t-ph="serviceNameHe" placeholder="שם בעברית" style="flex:1;min-width:110px">
-        <input type="text" id="newSvcEn" data-t-ph="serviceNameEn" placeholder="שם באנגלית" style="flex:1;min-width:110px">
-        <input type="number" id="newSvcDur" value="30" min="5" max="480" step="5" style="width:76px">
-        <input type="number" id="newSvcPrice" value="70" min="0" step="5" style="width:76px">
-        <button class="btn" style="width:auto" id="addService" type="button" data-t="addService">הוסף שירות</button>
-      </div>
-    </section>
-
-    <button class="btn btn-quiet" id="signOut" type="button" data-t="signOut">התנתק</button>
+    <a href="index.html" class="btn btn-text" style="margin-top:10px"><span data-t="viewSite">לאתר</span></a>
   </div>
+</section>
 
-  <p class="foot"><a href="index.html" data-t="bookAnother">לקבוע תור</a></p>
+<div class="boot" id="boot"><div class="spinner"></div></div>
+
+<!-- ============================== admin app ============================== -->
+<div id="adminApp" class="app hidden">
+
+  <aside class="side">
+    <a class="logo" href="index.html" target="_blank" rel="noopener">
+      <span class="logo-pole"></span>
+      <span class="logo-text"><b data-t="brand">עקיבא</b><small data-t="adminTitle">ניהול</small></span>
+    </a>
+    <nav class="tabs" id="tabs" role="tablist"></nav>
+    <div class="side-foot">
+      <div class="lang-toggle" role="group" aria-label="Language">
+        <button type="button" data-lang-btn="he" aria-pressed="true">עב</button>
+        <button type="button" data-lang-btn="en" aria-pressed="false">EN</button>
+      </div>
+      <a class="side-link" href="index.html" target="_blank" rel="noopener" data-t="viewSite">לאתר</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="top">
+      <div>
+        <small class="top-date" id="topDate"></small>
+        <h1 class="top-title" id="topTitle"></h1>
+      </div>
+      <div class="top-end">
+        <div class="lang-toggle mobile-only" role="group" aria-label="Language">
+          <button type="button" data-lang-btn="he" aria-pressed="true">עב</button>
+          <button type="button" data-lang-btn="en" aria-pressed="false">EN</button>
+        </div>
+        <a class="icon-btn" href="index.html" target="_blank" rel="noopener" aria-label="site"><svg viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>
+      </div>
+    </header>
+
+    <!-- ============================ dashboard ============================ -->
+    <section class="panel" data-panel="dash">
+      <div class="kpis">
+        <div class="kpi kpi-gold"><small data-t="dashToday">תורים היום</small><b id="kpiToday">–</b></div>
+        <div class="kpi"><small data-t="dashWeek">תורים השבוע</small><b id="kpiWeek">–</b></div>
+        <div class="kpi"><small data-t="dashRevenue">הכנסה צפויה השבוע</small><b id="kpiRevenue">–</b></div>
+      </div>
+      <div class="grid-2">
+        <div class="card next-card" id="nextCard"></div>
+        <div class="card">
+          <h3 class="card-title" data-t="dashWeekChart">7 הימים הקרובים</h3>
+          <div class="chart" id="weekChart"></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3 class="card-title" data-t="dashQuick">פעולות מהירות</h3>
+        <div class="quick">
+          <button type="button" class="quick-btn" data-quick="photo"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="12" cy="12" r="3.5"/><path d="M8 5l1.5-2h5L16 5"/></svg><span data-t="quickAddPhoto">העלה תמונה</span></button>
+          <button type="button" class="quick-btn" data-quick="appt"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4M12 13v5M9.5 15.5h5"/></svg><span data-t="quickAddAppt">תור ידני</span></button>
+          <button type="button" class="quick-btn" data-quick="dayoff"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M6 6l12 12"/></svg><span data-t="quickDayOff">יום חופש</span></button>
+          <button type="button" class="quick-btn" data-quick="site"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><span data-t="tabSite">תוכן האתר</span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== diary ============================== -->
+    <section class="panel hidden" data-panel="diary">
+      <div class="card">
+        <div class="diary-nav">
+          <button class="icon-btn" id="prevDay" type="button" aria-label="previous"><svg viewBox="0 0 24 24" class="flip"><path d="M15 6l-6 6 6 6"/></svg></button>
+          <input type="date" id="diaryDate" class="input">
+          <button class="icon-btn" id="nextDay" type="button" aria-label="next"><svg viewBox="0 0 24 24" class="flip"><path d="M9 6l6 6-6 6"/></svg></button>
+          <button class="btn btn-ghost btn-sm" id="todayBtn" type="button"><span data-t="today">היום</span></button>
+        </div>
+        <div class="diary-strip" id="diaryStrip"></div>
+      </div>
+      <div class="appt-list" id="diaryList"></div>
+
+      <details class="card fold" id="addApptFold">
+        <summary><span class="fold-ico">+</span><span><b data-t="addAppt">הוסף תור ידני</b><small data-t="addApptHint">תור שנקבע בטלפון או פנים מול פנים</small></span></summary>
+        <div class="form-grid">
+          <label class="f"><span data-t="service">שירות</span><select id="maService" class="input"></select></label>
+          <label class="f"><span data-t="time">שעה</span><input type="time" id="maTime" class="input" value="10:00"></label>
+          <label class="f"><span data-t="name">שם מלא</span><input type="text" id="maName" class="input" maxlength="60"></label>
+          <label class="f"><span data-t="phone">טלפון</span><input type="tel" id="maPhone" class="input ltr" maxlength="25"></label>
+          <label class="f wide"><span data-t="note">הערה</span><input type="text" id="maNote" class="input" maxlength="200"></label>
+        </div>
+        <button class="btn btn-gold" type="button" id="maAdd"><span data-t="addAppt">הוסף תור ידני</span></button>
+      </details>
+    </section>
+
+    <!-- ============================= gallery ============================= -->
+    <section class="panel hidden" data-panel="gallery">
+      <div class="notice notice-error hidden" data-missing="gallery"></div>
+      <label class="drop" id="drop">
+        <input type="file" id="fileInput" accept="image/*" multiple>
+        <span class="drop-ico"><svg viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg></span>
+        <b data-t="galleryDrop">גרור לכאן תמונות או לחץ לבחירה</b>
+        <small data-t="galleryDropHint"></small>
+      </label>
+      <div class="queue" id="queue"></div>
+      <div class="gal-grid" id="galGrid"></div>
+    </section>
+
+    <!-- ============================= services ============================ -->
+    <section class="panel hidden" data-panel="services">
+      <div class="svc-admin" id="servicesList"></div>
+      <div class="sticky-save"><button class="btn btn-gold btn-lg btn-block" id="saveServices" type="button"><span data-t="saveAll">שמור הכל</span></button></div>
+      <details class="card fold">
+        <summary><span class="fold-ico">+</span><span><b data-t="addService">הוסף שירות</b></span></summary>
+        <div class="form-grid">
+          <label class="f"><span data-t="serviceNameHe">שם בעברית</span><input type="text" id="newSvcHe" class="input"></label>
+          <label class="f"><span data-t="serviceNameEn">שם באנגלית</span><input type="text" id="newSvcEn" class="input" dir="ltr"></label>
+          <label class="f"><span data-t="duration">משך (דקות)</span><input type="number" id="newSvcDur" class="input" value="30" min="5" max="480" step="5"></label>
+          <label class="f"><span data-t="price">מחיר</span><input type="number" id="newSvcPrice" class="input" value="50" min="0" step="5"></label>
+        </div>
+        <button class="btn btn-gold" id="addService" type="button"><span data-t="addService">הוסף שירות</span></button>
+      </details>
+    </section>
+
+    <!-- ========================= hours, breaks, days ===================== -->
+    <section class="panel hidden" data-panel="hours">
+      <div class="card">
+        <h3 class="card-title" data-t="weeklyHours">שעות שבועיות</h3>
+        <div id="hoursList"></div>
+        <div id="hoursNotice" class="notice hidden" style="margin-top:12px"></div>
+        <button class="btn btn-gold btn-block" id="saveHours" type="button" style="margin-top:12px"><span data-t="save">שמור</span></button>
+      </div>
+
+      <div class="card">
+        <h3 class="card-title" data-t="tabBreaks">הפסקות</h3>
+        <div id="breaksList"></div>
+        <div class="inline-form">
+          <select id="breakWeekday" class="input"></select>
+          <input type="time" id="breakStart" value="13:00" class="input">
+          <input type="time" id="breakEnd" value="14:00" class="input">
+          <button class="btn btn-gold btn-sm" id="addBreak" type="button"><span data-t="addBreak">הוסף הפסקה</span></button>
+        </div>
+      </div>
+
+      <div class="card" id="daysCard">
+        <h3 class="card-title" data-t="tabDays">ימים חריגים</h3>
+        <div id="daysList"></div>
+        <div class="inline-form">
+          <input type="date" id="ovDate" class="input">
+          <label class="inline-switch">
+            <button class="switch" id="ovClosed" type="button" role="switch" aria-checked="true"></button>
+            <span data-t="dayClosed">סגור כל היום</span>
+          </label>
+          <input type="time" id="ovOpen" value="09:00" class="input hidden">
+          <input type="time" id="ovClose" value="19:00" class="input hidden">
+          <button class="btn btn-gold btn-sm" id="addOverride" type="button"><span data-t="addDayOff">הוסף יום חריג</span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ site content ========================= -->
+    <section class="panel hidden" data-panel="site">
+      <div class="notice notice-error hidden" data-missing="site"></div>
+      <p class="hint" data-t="leaveEmpty">השאר ריק כדי להשתמש בברירת המחדל</p>
+      <div id="siteForm"></div>
+      <div class="sticky-save"><button class="btn btn-gold btn-lg btn-block" id="saveSite" type="button"><span data-t="saveAll">שמור הכל</span></button></div>
+    </section>
+
+    <!-- ============================ testimonials ========================= -->
+    <section class="panel hidden" data-panel="reviews">
+      <div class="notice notice-error hidden" data-missing="reviews"></div>
+      <div id="reviewsList"></div>
+      <div class="card">
+        <h3 class="card-title" data-t="addReview">הוסף המלצה</h3>
+        <div class="form-grid">
+          <label class="f"><span data-t="reviewAuthor">שם הלקוח</span><input type="text" id="rvAuthor" class="input" maxlength="60"></label>
+          <label class="f"><span data-t="rating">דירוג</span><div class="stars" id="rvRating" data-value="5"></div></label>
+          <label class="f wide"><span data-t="reviewBody">מה הוא אמר</span><textarea id="rvBody" class="input" rows="3" maxlength="600"></textarea></label>
+        </div>
+        <button class="btn btn-gold" id="addReview" type="button"><span data-t="addReview">הוסף המלצה</span></button>
+      </div>
+    </section>
+
+    <!-- ============================== settings =========================== -->
+    <section class="panel hidden" data-panel="settings">
+      <div class="card">
+        <p class="hint" data-t="settingsHint"></p>
+        <div class="form-grid">
+          <label class="f"><span data-t="setSlotStep">מרווח בין תורים</span><input type="number" id="setStep" class="input" min="5" max="120" step="5"></label>
+          <label class="f"><span data-t="setLead">הכי מוקדם שאפשר לקבוע</span><input type="number" id="setLead" class="input" min="0" step="15"></label>
+          <label class="f"><span data-t="setDaysAhead">כמה ימים קדימה</span><input type="number" id="setDays" class="input" min="1" max="120"></label>
+          <label class="f"><span data-t="setMaxOpen">מקסימום תורים פתוחים</span><input type="number" id="setMax" class="input" min="1" max="20"></label>
+        </div>
+        <button class="btn btn-gold" id="saveSettings" type="button"><span data-t="save">שמור</span></button>
+      </div>
+      <button class="btn btn-ghost btn-block" id="signOut" type="button"><span data-t="signOut">התנתק</span></button>
+    </section>
+  </main>
+
+  <nav class="bottom-tabs" id="bottomTabs" role="tablist"></nav>
 </div>
 
-<script src="js/supabase.js?v=202611012007"></script>
-<script src="js/config.js?v=202611012007"></script>
-<script src="js/i18n.js?v=202611012007"></script>
-<script src="js/common.js?v=202611012007"></script>
-<script src="js/admin.js?v=202611012007"></script>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script src="js/supabase.js?v=202611031009"></script>
+<script src="js/config.js?v=202611031009"></script>
+<script src="js/i18n.js?v=202611031009"></script>
+<script src="js/common.js?v=202611031009"></script>
+<script src="js/admin.js?v=202611031009"></script>
 </body>
 </html>

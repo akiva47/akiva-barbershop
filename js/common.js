@@ -131,6 +131,110 @@
       if (el) el.classList.add("hidden");
     },
 
+    // ------------------------------------------------------------ site content
+    // The admin-editable row. A missing table (migration not yet applied) or a
+    // network hiccup leaves it empty, and every caller falls back to I18N.
+    content: {},
+
+    loadContent: async function () {
+      if (!this.db) return {};
+      try {
+        const { data, error } = await this.db.from("site_content").select("*").eq("id", 1).maybeSingle();
+        if (!error && data) this.content = data;
+      } catch (e) {}
+      return this.content;
+    },
+
+    // content field for the current language, else the built-in default
+    c: function (field, i18nKey) {
+      const v = this.content[field + "_" + this.lang];
+      if (v && String(v).trim()) return String(v);
+      return this.t[i18nKey] || "";
+    },
+
+    bitUrl: function () {
+      return (this.content.bit_url && this.content.bit_url.trim()) ||
+             (cfg.BIT_URL || "");
+    },
+
+    // WhatsApp number in the form wa.me wants: digits only, 972 instead of 0.
+    waNumber: function () {
+      let d = String((this.content.whatsapp && this.content.whatsapp.trim()) || cfg.WHATSAPP || "").replace(/\D/g, "");
+      if (d.indexOf("0") === 0) d = "972" + d.slice(1);
+      return d;
+    },
+
+    waUrl: function (text) {
+      const n = this.waNumber();
+      if (!n) return "";
+      return "https://wa.me/" + n + (text ? "?text=" + encodeURIComponent(text) : "");
+    },
+
+    serviceName: function (s) {
+      return this.lang === "he" ? s.name_he : s.name_en;
+    },
+
+    serviceDesc: function (s) {
+      return (this.lang === "he" ? s.description_he : s.description_en) || "";
+    },
+
+    priceText: function (s) {
+      const t = this.t;
+      if (s.price === null || s.price === undefined) return "";
+      return (s.price_max !== null && s.price_max !== undefined)
+        ? t.currency + Number(s.price).toFixed(0) + "–" + Number(s.price_max).toFixed(0)
+        : t.currency + Number(s.price).toFixed(0);
+    },
+
+    // ------------------------------------------------- bookings on this device
+    // Only the cancellation tokens are kept, and only in this browser. They are
+    // the customer's own keys; the details are fetched fresh through
+    // appointment_by_token each time.
+    myTokens: function () {
+      try {
+        const v = JSON.parse(localStorage.getItem("barbershop.mine") || "[]");
+        return Array.isArray(v) ? v : [];
+      } catch (e) { return []; }
+    },
+
+    rememberToken: function (token, startsAt) {
+      try {
+        const list = this.myTokens().filter((x) => x.t !== token);
+        list.unshift({ t: token, s: startsAt });
+        localStorage.setItem("barbershop.mine", JSON.stringify(list.slice(0, 12)));
+      } catch (e) {}
+    },
+
+    cancelUrl: function (token) {
+      return location.origin + location.pathname.replace(/[^/]*$/, "") +
+             "cancel.html?t=" + encodeURIComponent(token);
+    },
+
+    // A calendar file the phone can open — the nearest thing to a reminder a
+    // static site can give.
+    icsFile: function (title, start, end, url) {
+      const z = (d) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+      const esc = (s) => String(s).replace(/([,;\\])/g, "\\$1");
+      const body = [
+        "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//akiva-barbershop//EN",
+        "BEGIN:VEVENT",
+        "UID:" + z(start) + "-" + Math.random().toString(36).slice(2) + "@akiva",
+        "DTSTAMP:" + z(new Date()),
+        "DTSTART:" + z(start), "DTEND:" + z(end),
+        "SUMMARY:" + esc(title),
+        "DESCRIPTION:" + esc(url),
+        "BEGIN:VALARM", "TRIGGER:-PT2H", "ACTION:DISPLAY", "DESCRIPTION:" + esc(title), "END:VALARM",
+        "END:VEVENT", "END:VCALENDAR"
+      ].join("\r\n");
+      return new Blob([body], { type: "text/calendar;charset=utf-8" });
+    },
+
+    esc: function (s) {
+      return String(s == null ? "" : s).replace(/[&<>"']/g, (ch) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      })[ch]);
+    },
+
     // Guard every page: without config there is nothing to talk to.
     requireConfig: function (noticeEl) {
       if (this.configured) return true;

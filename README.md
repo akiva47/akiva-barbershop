@@ -66,31 +66,31 @@ Everything below lives in the database and is edited from `admin.html`:
 
 | Screen | What it controls |
 | --- | --- |
-| Diary | Every booking for a day, with name and phone. Tap to call, ✕ to cancel |
-| Opening hours | Which of the seven days you work, and from when to when |
-| Breaks | Recurring weekly breaks — lunch, prayer, a standing appointment |
-| Special days | One-off closures or different hours for a specific date |
-| Services | Names in both languages, duration, price, active or not |
+| Dashboard | Today's and this week's bookings, expected income, the next client, quick actions |
+| Diary | Every booking for a day, with name and phone. Call, WhatsApp, cancel, delete, or add a booking taken by phone |
+| Gallery | Upload photos of your work (resized in the browser before upload), captions in both languages, order, show/hide, pick the hero and "about" photos |
+| Services | Names and short descriptions in both languages, duration, price or price range, order, active or not |
+| Hours & days | Weekly opening hours, recurring breaks, one-off closures or different hours |
+| Site content | Hero title and subtitle, the running words, the about text, the numbers section, phone, WhatsApp, Instagram/TikTok/Facebook, address, Waze/Maps, Bit link. Anything left empty falls back to the built-in wording |
+| Testimonials | What real clients said, with a star rating. The section is hidden while there are none |
+| Settings | Step between start times, booking lead time, how far ahead customers may book, open bookings per phone |
 
-Slot length follows the service duration. The step between offered start times,
-the booking lead time and how far ahead customers may book live in the
-`shop_settings` row.
+The photos live in a public Supabase Storage bucket called `gallery`. Anyone
+can view a photo by its URL (they are on the website); only the admin can
+upload or delete. The bucket and its policies are created by
+`supabase/migrations/20261103120000_showcase_site.sql`.
 
-## Layout
+## The customer site
 
-```
-index.html          customer booking
-admin.html          your diary and settings
-cancel.html         the page a customer's cancellation link opens
-supabase/migrations/  tables, policies and functions — the security model
-js/config.js        your project URL and anon key
-js/i18n.js          every string, Hebrew and English
-js/common.js        database client, language, date formatting
-js/booking.js       customer flow
-js/admin.js         admin screens
-js/supabase.js      the Supabase client, vendored so there is no CDN to trust
-css/app.css         one stylesheet; logical properties flip it for Hebrew
-```
+`index.html` is the shop's website and booking in one page: an animated hero
+showing the next free slot, the price list, a scroll-driven gallery, hours with
+an "open now" badge, contact buttons and a WhatsApp button. Booking opens as a
+full-screen sheet (service, then day and time, then name and phone) and ends
+with an "add to calendar" file, the cancel link and the Bit button. Bookings
+made on a phone are remembered on that phone under "My bookings".
+
+All motion is plain CSS and JavaScript in `js/fx.js` (no libraries), and it is
+switched off for anyone whose device asks for reduced motion.
 
 ## Known limits
 
