@@ -301,7 +301,15 @@ body.is-loading .pole-fly { opacity: 0; }
 .work-head .sec-title { margin-bottom: 6px; }
 .work-track { display: flex; gap: clamp(14px, 2vw, 26px); padding-inline: var(--gutter); width: max-content; will-change: transform; align-items: center; }
 .work.static .work-sticky { position: relative; min-height: 0; }
-.work.static .work-track { width: auto; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 10px; scrollbar-width: none; }
+.work.static .work-track { width: auto; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter); padding-block: 4svh 6svh; scrollbar-width: none; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; cursor: grab; }
+.work.static .work-track.dragging { cursor: grabbing; scroll-snap-type: none; }
+.work.static .work-track.dragging .wk { pointer-events: none; }
+.work.static .wk { scroll-snap-align: start; }
+.work-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; }
+.work-arrows { display: none; gap: 10px; flex: none; margin-bottom: 18px; }
+.work-arrows .icon-btn { width: 54px; height: 54px; }
+.work-arrows .icon-btn:disabled { opacity: .3; pointer-events: none; }
+@media (hover: hover) and (pointer: fine) { .work-arrows { display: flex; } }
 .work.static .work-track::-webkit-scrollbar { display: none; }
 .wk { position: relative; flex: none; margin: 0; height: min(58svh, 560px); aspect-ratio: 3 / 4; border-radius: var(--r); overflow: hidden; background: var(--card); scroll-snap-align: center; cursor: zoom-in; }
 .wk:nth-child(3n+2) { aspect-ratio: 4 / 5; translate: 0 4svh; }

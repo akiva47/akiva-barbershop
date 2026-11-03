@@ -159,7 +159,6 @@
 
   // ---------------------------------------------------------------- gallery
 
-  let pin = null;
   function renderGallery() {
     const t = A.t;
     const has = S.gallery.length > 0;
@@ -170,17 +169,54 @@
     track.innerHTML = S.gallery.map((g, i) => {
       const cap = (A.lang === "he" ? g.caption_he : g.caption_en) || "";
       return '<figure class="wk" data-lb="' + i + '">' +
-        '<img src="' + A.esc(g.url) + '" alt="' + A.esc(cap) + '" loading="' + (i < 3 ? "eager" : "lazy") + '" decoding="async">' +
-        '<figcaption><span>' + A.esc(cap) + "</span><i>" + String(i + 1).padStart(2, "0") + "</i></figcaption></figure>";
+        '<img src="' + A.esc(g.url) + '" alt="' + A.esc(cap) + '" loading="' + (i < 3 ? "eager" : "lazy") + '" decoding="async" draggable="false">' +
+        (cap ? "<figcaption><span>" + A.esc(cap) + "</span></figcaption>" : "") + "</figure>";
     }).join("");
-    $("workTotal").textContent = String(S.gallery.length).padStart(2, "0");
-    if (!pin) {
-      pin = FX.pinTrack($("work"), $("workPin"), track, (i, p) => {
-        $("workIdx").textContent = String(i + 1).padStart(2, "0");
-        $("workBar").style.transform = "scaleX(" + p.toFixed(4) + ")";
-      });
-    } else pin.layout();
+    workArrows();
   }
+
+  // The gallery is its own carousel: swipe on a phone, arrows or drag with the
+  // mouse on a computer. Scrolling the page up and down does not move it.
+  const track = $("workTrack");
+  const rtlPage = () => document.documentElement.dir === "rtl";
+  function step() {
+    const first = track.querySelector(".wk");
+    const gap = parseFloat(getComputedStyle(track).columnGap) || 20;
+    return first ? first.getBoundingClientRect().width + gap : track.clientWidth * 0.8;
+  }
+  function workArrows() {
+    const max = track.scrollWidth - track.clientWidth;
+    const pos = Math.abs(track.scrollLeft);   // negative in right-to-left pages
+    $("workPrev").disabled = pos < 4;
+    $("workNext").disabled = pos > max - 4;
+    $("work").querySelector(".work-arrows").classList.toggle("hidden", max < 8);
+  }
+  $("workNext").addEventListener("click", () => track.scrollBy({ left: (rtlPage() ? -1 : 1) * step(), behavior: "smooth" }));
+  $("workPrev").addEventListener("click", () => track.scrollBy({ left: (rtlPage() ? 1 : -1) * step(), behavior: "smooth" }));
+  track.addEventListener("scroll", workArrows, { passive: true });
+  window.addEventListener("resize", workArrows);
+
+  // Drag with the mouse (touch already swipes natively).
+  let drag = null;
+  track.addEventListener("pointerdown", (e) => {
+    if (e.pointerType !== "mouse") return;
+    drag = { x: e.clientX, left: track.scrollLeft, moved: false };
+    track.classList.add("dragging");
+  });
+  window.addEventListener("pointermove", (e) => {
+    if (!drag) return;
+    const dx = e.clientX - drag.x;
+    if (Math.abs(dx) > 5) drag.moved = true;
+    track.scrollLeft = drag.left - dx;
+  });
+  window.addEventListener("pointerup", () => {
+    if (!drag) return;
+    const moved = drag.moved;
+    drag = null;
+    track.classList.remove("dragging");
+    // A drag must not also open the photo it ended on.
+    if (moved) track.addEventListener("click", (ev) => { ev.stopPropagation(); ev.preventDefault(); }, { capture: true, once: true });
+  });
 
   // --------------------------------------------------------------- lightbox
 

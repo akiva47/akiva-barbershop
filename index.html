@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700&family=Rubik:wght@500;700;800;900&display=swap">
-<link rel="stylesheet" href="css/site.css?v=202611031723">
+<link rel="stylesheet" href="css/site.css?v=202611031727">
 </head>
 <body class="site is-loading">
 
@@ -150,16 +150,20 @@
   </section>
 
   <!-- =============================== gallery ============================== -->
-  <section class="work hidden" id="work" data-pole="0.5,1.4,90,0.5" data-bg="#030407">
+  <section class="work static hidden" id="work" data-pole="0.5,1.4,90,0.5" data-bg="#030407">
     <div class="work-pin" id="workPin">
       <div class="work-sticky">
         <div class="sec-head work-head">
-          <span class="kicker" data-reveal data-t="workKicker">מהכיסא</span>
-          <h2 class="sec-title" data-lines data-t-lines="workTitle"></h2>
+          <div>
+            <span class="kicker" data-reveal data-t="workKicker">מהכיסא</span>
+            <h2 class="sec-title" data-lines data-t-lines="workTitle"></h2>
+          </div>
+          <div class="work-arrows" data-reveal>
+            <button type="button" class="icon-btn" id="workPrev" aria-label="previous"><svg viewBox="0 0 24 24" class="flip"><path d="M15 6l-6 6 6 6"/></svg></button>
+            <button type="button" class="icon-btn" id="workNext" aria-label="next"><svg viewBox="0 0 24 24" class="flip"><path d="M9 6l6 6-6 6"/></svg></button>
+          </div>
         </div>
         <div class="work-track" id="workTrack"></div>
-        <div class="work-bar" aria-hidden="true"><span id="workBar"></span></div>
-        <div class="work-count" aria-hidden="true"><b id="workIdx">01</b><span>/</span><span id="workTotal">01</span></div>
       </div>
     </div>
   </section>
@@ -352,12 +356,12 @@
   <div class="lb-count" id="lbCount"></div>
 </div>
 
-<script src="js/supabase.js?v=202611031723"></script>
-<script src="js/config.js?v=202611031723"></script>
-<script src="js/i18n.js?v=202611031723"></script>
-<script src="js/common.js?v=202611031723"></script>
-<script src="js/fx.js?v=202611031723"></script>
-<script src="js/site.js?v=202611031723"></script>
-<script src="js/booking.js?v=202611031723"></script>
+<script src="js/supabase.js?v=202611031727"></script>
+<script src="js/config.js?v=202611031727"></script>
+<script src="js/i18n.js?v=202611031727"></script>
+<script src="js/common.js?v=202611031727"></script>
+<script src="js/fx.js?v=202611031727"></script>
+<script src="js/site.js?v=202611031727"></script>
+<script src="js/booking.js?v=202611031727"></script>
 </body>
 </html>
