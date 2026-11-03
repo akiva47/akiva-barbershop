@@ -231,7 +231,10 @@ body.is-loading .pole-fly { opacity: 0; }
 @media (min-width: 900px) { .hero-scroll { display: flex; } }
 
 /* ----------------------------------------------------------------- marquee */
-.marquee { position: relative; z-index: 3; overflow: hidden; padding-block: 18px; background: var(--lime); color: var(--lime-ink); transform: rotate(-2deg) scale(1.06); margin-block: 10px 0; }
+/* The band always runs left to right: in a right-to-left page a strip wider
+   than the screen is pinned to the right edge, and Safari then slides the
+   words out of view. Each Hebrew word still reads right to left inside it. */
+.marquee { direction: ltr; position: relative; z-index: 3; overflow: hidden; padding-block: 18px; background: var(--lime); color: var(--lime-ink); transform: rotate(-2deg) scale(1.06); margin-block: 10px 0; }
 [dir="rtl"] .marquee { transform: rotate(2deg) scale(1.06); }
 .marquee-track { display: flex; width: max-content; will-change: transform; direction: ltr; }
 .marquee-group { display: flex; align-items: center; flex: none; }
