@@ -89,7 +89,7 @@
     }
     return new Promise((resolve) => {
       const t0 = performance.now();
-      const min = 1500;
+      const min = 900;
       let done = false;
       ready.then(() => { done = true; }, () => { done = true; });
       (function tick(now) {
@@ -99,7 +99,7 @@
         if (done && elapsed >= min) p = clamp(0.9 + (elapsed - min) / 350, 0, 1);
         if (elapsed > 6000) p = 1;     // never hold the page hostage
         const n = Math.round(p * 100);
-        count.textContent = n;
+        if (count) count.textContent = n;
         pre.style.setProperty("--p", p);
         if (p < 1) requestAnimationFrame(tick);
         else setTimeout(() => { finish(); resolve(); }, 120);
