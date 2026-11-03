@@ -15,8 +15,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800&family=Karantina:wght@400;700&display=swap">
-<link rel="stylesheet" href="css/admin-base.css?v=202611031049">
-<link rel="stylesheet" href="css/admin.css?v=202611031049">
+<link rel="stylesheet" href="css/admin-base.css?v=202611031102">
+<link rel="stylesheet" href="css/admin.css?v=202611031102">
 </head>
 <body class="admin">
 
@@ -34,7 +34,7 @@
         <button type="button" data-lang-btn="en" aria-pressed="false">EN</button>
       </div>
     </div>
-    <h1 class="login-title"><span data-t="brand">עקיבא</span></h1>
+    <h1 class="login-title"><img src="assets/logo.png" alt="AKIVA" width="1261" height="377"></h1>
     <form id="loginForm" novalidate>
       <label class="fl">
         <input id="email" type="email" autocomplete="username" placeholder=" " required>
@@ -57,10 +57,7 @@
 <div id="adminApp" class="app hidden">
 
   <aside class="side">
-    <a class="logo" href="index.html" target="_blank" rel="noopener">
-      <span class="logo-pole"></span>
-      <span class="logo-text"><b data-t="brand">עקיבא</b><small data-t="adminTitle">ניהול</small></span>
-    </a>
+    <a class="logo" href="index.html" target="_blank" rel="noopener"><img class="logo-img" src="assets/logo.png" alt="AKIVA" width="1261" height="377"></a>
     <nav class="tabs" id="tabs" role="tablist"></nav>
     <div class="side-foot">
       <div class="lang-toggle" role="group" aria-label="Language">
@@ -237,6 +234,49 @@
         </div>
         <button class="btn btn-gold" id="saveSettings" type="button"><span data-t="save">שמור</span></button>
       </div>
+      <div class="card notify-card" id="notifyCard">
+        <h3 class="card-title" data-t="notifyTitle">התראות על תורים</h3>
+        <p class="hint" data-t="notifyHint"></p>
+        <div class="notice notice-error hidden" data-missing="notify"></div>
+
+        <div class="nt-switches">
+          <label class="inline-switch"><button class="switch" id="ntNew" type="button" role="switch" aria-checked="true"></button><span data-t="notifyOnNew">תור חדש</span></label>
+          <label class="inline-switch"><button class="switch" id="ntCancel" type="button" role="switch" aria-checked="true"></button><span data-t="notifyOnCancel">ביטול תור</span></label>
+        </div>
+
+        <details class="nt-channel" open>
+          <summary><span class="nt-ico nt-tg">✈</span><b>Telegram</b><small data-t="notifyTgTag">מומלץ · חינם ואמין</small><i class="nt-state" id="tgState"></i></summary>
+          <ol class="nt-steps">
+            <li data-th="tgStep1"></li>
+            <li data-th="tgStep2"></li>
+            <li data-th="tgStep3"></li>
+          </ol>
+          <div class="form-grid">
+            <label class="f wide"><span data-t="tgToken">הטוקן של הבוט</span><input type="text" id="tgToken" class="input ltr" autocomplete="off" spellcheck="false" placeholder="123456789:AA..."></label>
+            <label class="f"><span data-t="tgChat">מספר הצ׳אט</span><input type="text" id="tgChat" class="input ltr" autocomplete="off" placeholder="123456789"></label>
+            <div class="f"><span>&nbsp;</span><button class="btn btn-ghost" id="tgFind" type="button"><span data-t="tgFind">מצא אוטומטית</span></button></div>
+          </div>
+        </details>
+
+        <details class="nt-channel">
+          <summary><span class="nt-ico nt-wa">✆</span><b>WhatsApp</b><small>CallMeBot</small><i class="nt-state" id="waState"></i></summary>
+          <ol class="nt-steps">
+            <li data-th="waStep1"></li>
+            <li data-th="waStep2"></li>
+            <li data-th="waStep3"></li>
+          </ol>
+          <div class="form-grid">
+            <label class="f"><span data-t="waPhone">המספר שלך</span><input type="tel" id="waPhone" class="input ltr" placeholder="972586532121"></label>
+            <label class="f"><span data-t="waKey">ה־API key מ־CallMeBot</span><input type="text" id="waKey" class="input ltr" autocomplete="off" spellcheck="false"></label>
+          </div>
+        </details>
+
+        <div class="nt-actions">
+          <button class="btn btn-gold" id="saveNotify" type="button"><span data-t="save">שמור</span></button>
+          <button class="btn btn-ghost" id="testNotify" type="button"><span data-t="notifyTest">שלח הודעת בדיקה</span></button>
+        </div>
+      </div>
+
       <button class="btn btn-ghost btn-block" id="signOut" type="button"><span data-t="signOut">התנתק</span></button>
     </section>
   </main>
@@ -246,10 +286,10 @@
 
 <div class="toasts" id="toasts" aria-live="polite"></div>
 
-<script src="js/supabase.js?v=202611031049"></script>
-<script src="js/config.js?v=202611031049"></script>
-<script src="js/i18n.js?v=202611031049"></script>
-<script src="js/common.js?v=202611031049"></script>
-<script src="js/admin.js?v=202611031049"></script>
+<script src="js/supabase.js?v=202611031102"></script>
+<script src="js/config.js?v=202611031102"></script>
+<script src="js/i18n.js?v=202611031102"></script>
+<script src="js/common.js?v=202611031102"></script>
+<script src="js/admin.js?v=202611031102"></script>
 </body>
 </html>

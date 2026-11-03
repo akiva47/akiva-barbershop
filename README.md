@@ -92,10 +92,29 @@ made on a phone are remembered on that phone under "My bookings".
 All motion is plain CSS and JavaScript in `js/fx.js` (no libraries), and it is
 switched off for anyone whose device asks for reduced motion.
 
+## Booking alerts
+
+`supabase/migrations/20261103150000_booking_notifications.sql` adds a trigger
+on `appointments` that messages Akiva whenever a customer books or cancels. The
+message is sent from Postgres through `pg_net`, so it arrives even when no
+browser is open. Bookings the admin adds by hand do not trigger it.
+
+Channels, set up from **Settings → Booking alerts** in the admin:
+
+- **Telegram** (recommended): create a bot with @BotFather, paste its token,
+  message the bot once, then tap "Find automatically" to fill in the chat id.
+- **WhatsApp** through CallMeBot, a free outside service: their bot replies
+  with an API key once you message it.
+
+The keys live in `notify_settings`, readable and writable only by an admin.
+`notify_send` is not executable by `anon` or `authenticated`, so visitors
+cannot use it to send messages; `notify_test` is admin only.
+
 ## Known limits
 
-- **No reminders.** A web app cannot schedule a notification. Customers do not
-  get an SMS or an email; the cancellation link is the whole handshake.
+- **No reminders for customers.** Customers do not get an SMS or an email; the
+  cancellation link and the calendar file are the whole handshake. (Akiva does
+  get an alert for each booking, see above.)
 - **One chair.** The schema assumes a single barber. A second chair would mean
   adding a provider column to appointments and to availability.
 - **The cancellation link is the only key a customer has.** Lose it and they
