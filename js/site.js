@@ -59,11 +59,18 @@
     if (url) {
       if (img.getAttribute("src") !== url) img.src = url;
       img.classList.remove("hidden");
-      $("hero").classList.add("has-img");
+      $("heroPole").classList.add("hidden");
     } else {
       img.classList.add("hidden");
-      $("hero").classList.remove("has-img");
+      $("heroPole").classList.remove("hidden");
     }
+    // The first service on the price list, as a sticker on the photo.
+    const s0 = S.services[0];
+    const st = $("stickerPrice");
+    if (s0 && A.priceText(s0)) {
+      st.textContent = A.serviceName(s0) + " " + A.priceText(s0);
+      st.classList.remove("hidden");
+    } else st.classList.add("hidden");
   }
 
   function renderMarquee() {
@@ -127,6 +134,7 @@
         '<span class="svc-num">' + String(i + 1).padStart(2, "0") + "</span>" +
         '<span class="svc-main"><span class="svc-name">' + A.esc(A.serviceName(s)) + "</span>" +
         (desc ? '<span class="svc-desc">' + A.esc(desc) + "</span>" : "") + "</span>" +
+        '<span class="svc-dots" aria-hidden="true"></span>' +
         '<span class="svc-meta"><span class="svc-price">' + A.esc(A.priceText(s)) + "</span>" +
         '<span class="svc-dur">' + clock + s.duration_min + " " + A.esc(t.minutes) + "</span></span>" +
         '<span class="svc-go">' + A.esc(t.bookThis) + arrow + "</span>" +
@@ -147,7 +155,7 @@
     const track = $("workTrack");
     track.innerHTML = S.gallery.map((g, i) => {
       const cap = (A.lang === "he" ? g.caption_he : g.caption_en) || "";
-      return '<figure class="wk" data-cursor="+" data-lb="' + i + '">' +
+      return '<figure class="wk" data-lb="' + i + '">' +
         '<img src="' + A.esc(g.url) + '" alt="' + A.esc(cap) + '" loading="' + (i < 3 ? "eager" : "lazy") + '" decoding="async">' +
         '<figcaption><span>' + A.esc(cap) + "</span><i>" + String(i + 1).padStart(2, "0") + "</i></figcaption></figure>";
     }).join("");
