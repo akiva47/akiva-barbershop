@@ -3,6 +3,13 @@
    dashboard and the site feel like one product.
    =========================================================================== */
 
+/* The site's palette: near-black, cobalt and lime */
+:root {
+  --bg: #030407; --bg-2: #0A0C12; --card: #10131B; --card-2: #171B25;
+  --gold: #D4FF24; --gold-2: #E6FF7A; --gold-ink: #030407;
+  --red: #1558C9; --blue: #1558C9; --mint: #D4FF24;
+}
+
 body.admin { background: var(--bg); min-height: 100svh; }
 .boot { min-height: 100svh; display: grid; place-items: center; }
 .ltr { direction: ltr; }
