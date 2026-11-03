@@ -14,7 +14,8 @@ for f in index.html admin.html cancel.html; do
   [ -f "$f" ] || continue
   # Rewrite an existing ?v=... or add one if this is the first time.
   perl -pi -e 's{(href="css/[^"?]+\.css)(\?v=\d+)?"}{$1?v='"$V"'"}g;
-               s{(src="js/[^"?]+\.js)(\?v=\d+)?"}{$1?v='"$V"'"}g;' "$f"
+               s{(src="js/[^"?]+\.js)(\?v=\d+)?"}{$1?v='"$V"'"}g;
+               s{(<meta name="build" content=")\d+(">)}{${1}'"$V"'${2}}g;' "$f"
 done
 
 echo "asset version -> $V"
