@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="build" content="202611042232">
+<meta name="build" content="202611042241">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -12,12 +12,13 @@
 <meta name="robots" content="noindex">
 <title>ניהול</title>
 <link rel="apple-touch-icon" href="assets/icon-180.png">
+<link rel="manifest" href="manifest-admin.webmanifest">
 <link rel="icon" type="image/png" href="assets/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800&family=Karantina:wght@400;700&display=swap">
-<link rel="stylesheet" href="css/admin-base.css?v=202611042232">
-<link rel="stylesheet" href="css/admin.css?v=202611042232">
+<link rel="stylesheet" href="css/admin-base.css?v=202611042241">
+<link rel="stylesheet" href="css/admin.css?v=202611042241">
 </head>
 <body class="admin">
 
@@ -245,7 +246,16 @@
           <label class="inline-switch"><button class="switch" id="ntCancel" type="button" role="switch" aria-checked="true"></button><span data-t="notifyOnCancel">ביטול תור</span></label>
         </div>
 
-        <details class="nt-channel" open>
+        <div class="nt-channel nt-device">
+          <div class="nt-device-row">
+            <span class="nt-ico nt-push">🔔</span>
+            <span class="nt-device-text"><b data-t="pushDeviceTitle">התראות מהאתר, במכשיר הזה</b><small id="pushState"></small></span>
+            <button class="btn btn-gold btn-sm" id="pushEnable" type="button"><span data-t="pushEnable">הפעל</span></button>
+          </div>
+          <p class="hint" data-t="pushDeviceHint"></p>
+        </div>
+
+        <details class="nt-channel">
           <summary><span class="nt-ico nt-tg">✈</span><b>Telegram</b><small data-t="notifyTgTag">מומלץ · חינם ואמין</small><i class="nt-state" id="tgState"></i></summary>
           <ol class="nt-steps">
             <li data-th="tgStep1"></li>
@@ -287,10 +297,10 @@
 
 <div class="toasts" id="toasts" aria-live="polite"></div>
 
-<script src="js/supabase.js?v=202611042232"></script>
-<script src="js/config.js?v=202611042232"></script>
-<script src="js/i18n.js?v=202611042232"></script>
-<script src="js/common.js?v=202611042232"></script>
-<script src="js/admin.js?v=202611042232"></script>
+<script src="js/supabase.js?v=202611042241"></script>
+<script src="js/config.js?v=202611042241"></script>
+<script src="js/i18n.js?v=202611042241"></script>
+<script src="js/common.js?v=202611042241"></script>
+<script src="js/admin.js?v=202611042241"></script>
 </body>
 </html>

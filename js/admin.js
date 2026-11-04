@@ -1202,6 +1202,67 @@
     busy(btn, false);
   });
 
+  // ------------------------------------------- notifications on this device
+  async function renderPushState() {
+    const t = A.t;
+    const el = $("pushState");
+    let on = false;
+    try {
+      if (A.push.supported() && Notification.permission === "granted") {
+        const reg = await navigator.serviceWorker.getRegistration();
+        on = !!(reg && await reg.pushManager.getSubscription());
+      }
+    } catch (e) {}
+    el.textContent = on ? t.pushEnabled : t.pushDisabled;
+    el.classList.toggle("on", on);
+    $("pushEnable").classList.toggle("hidden", on);
+  }
+
+  // The signing keys are made here, once, the first time notifications are
+  // switched on. The private half stays in notify_settings (admin only); the
+  // public half is published in site_content for customers' browsers.
+  async function ensurePushKeys() {
+    const { data } = await A.db.from("notify_settings").select("vapid_public, vapid_private").eq("id", 1).maybeSingle();
+    if (data && data.vapid_public && data.vapid_private) {
+      await A.db.from("site_content").upsert({ id: 1, push_public_key: data.vapid_public }, { onConflict: "id" });
+      return data.vapid_public;
+    }
+    const kp = await crypto.subtle.generateKey({ name: "ECDSA", namedCurve: "P-256" }, true, ["sign", "verify"]);
+    const pub = A.push.b64(await crypto.subtle.exportKey("raw", kp.publicKey));
+    const jwk = await crypto.subtle.exportKey("jwk", kp.privateKey);
+    const a = await A.db.from("notify_settings").upsert({ id: 1, vapid_public: pub, vapid_private: jwk.d }, { onConflict: "id" });
+    if (a.error) throw a.error;
+    const b = await A.db.from("site_content").upsert({ id: 1, push_public_key: pub }, { onConflict: "id" });
+    if (b.error) throw b.error;
+    return pub;
+  }
+
+  $("pushEnable").addEventListener("click", async () => {
+    const t = A.t;
+    if (A.push.iosNeedsInstall()) { flash("", t.pushIosHint); return; }
+    if (!A.push.supported()) { flash("error", t.pushUnsupported); return; }
+    const btn = $("pushEnable");
+    busy(btn, true);
+    try {
+      // Permission first: iOS only asks while the tap is still fresh.
+      const perm = await Notification.requestPermission();
+      if (perm !== "granted") throw new Error("DENIED");
+      const key = await ensurePushKeys();
+      const sub = await A.push.subscribe(key);
+      const { error } = await A.db.rpc("save_push", {
+        p_endpoint: sub.endpoint, p_p256dh: sub.p256dh, p_auth: sub.auth, p_token: null, p_admin: true
+      });
+      if (error) throw error;
+      flash("ok", t.pushReady);
+    } catch (e) {
+      const m = String((e && e.message) || "");
+      flash("error", m === "DENIED" ? t.pushDenied : isMissing(e) || /column|function/i.test(m) ? t.migrationMissing : t.errGeneric);
+    } finally {
+      busy(btn, false);
+      renderPushState();
+    }
+  });
+
   // ----------------------------------------------------------------- session
 
   async function enterAdmin() {
@@ -1217,6 +1278,7 @@
     renderGallery();
     renderSite();
     renderNotifyText();
+    renderPushState();
     await Promise.all([loadDash(), loadDiary(), loadHours(), loadBreaks(), loadOverrides(), loadReviews(), loadSettings(), loadNotify()]);
   }
 
@@ -1265,7 +1327,7 @@
     fillServiceSelect();
     renderDash(); renderStrip(); renderDiary(); renderGallery(); renderServices();
     renderHours(); renderBreaks(); renderOverrides(); renderSite(); renderReviews();
-    renderNotifyText(); renderNotifyState();
+    renderNotifyText(); renderNotifyState(); renderPushState();
   });
 
   A.mountLangToggle();

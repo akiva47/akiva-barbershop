@@ -258,6 +258,74 @@
       })[ch]);
     },
 
+    // ------------------------------------------------------------ web push
+    // Notifications from the site itself. The service worker (sw.js) shows
+    // them; the Edge Function "push" sends them.
+    push: {
+      supported: function () {
+        return "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
+      },
+      // An iPhone delivers web notifications only to a site opened from its
+      // home-screen icon, never to a Safari tab.
+      iosNeedsInstall: function () {
+        const ios = /iP(hone|ad|od)/.test(navigator.userAgent) ||
+                    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+        const standalone = navigator.standalone || window.matchMedia("(display-mode: standalone)").matches;
+        return ios && !standalone;
+      },
+      b64: function (buf) {
+        let s = "";
+        new Uint8Array(buf).forEach((b) => { s += String.fromCharCode(b); });
+        return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+      },
+      bytes: function (b64url) {
+        const pad = "=".repeat((4 - (b64url.length % 4)) % 4);
+        const bin = atob((b64url + pad).replace(/-/g, "+").replace(/_/g, "/"));
+        return Uint8Array.from(bin, (c) => c.charCodeAt(0));
+      },
+      // Ask permission (this must be the first await after the tap, or iOS
+      // refuses), then subscribe this device with the shop's public key.
+      subscribe: async function (publicKey) {
+        const perm = await Notification.requestPermission();
+        if (perm !== "granted") throw new Error("DENIED");
+        const reg = await navigator.serviceWorker.register("sw.js");
+        await navigator.serviceWorker.ready;
+        let sub = await reg.pushManager.getSubscription();
+        if (sub) {
+          const cur = sub.options && sub.options.applicationServerKey;
+          if (cur && this.b64(cur) !== publicKey) { await sub.unsubscribe(); sub = null; }
+        }
+        if (!sub) {
+          sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: this.bytes(publicKey) });
+        }
+        const j = sub.toJSON();
+        return { endpoint: j.endpoint, p256dh: j.keys.p256dh, auth: j.keys.auth };
+      }
+    },
+
+    // The customer's "remind me" button, on the confirmation and the booking page.
+    remindMe: async function (token, noticeEl, btn) {
+      const t = this.t;
+      const key = this.content.push_public_key;
+      if (!key) return;
+      if (this.push.iosNeedsInstall()) { this.notice(noticeEl, "quiet", t.pushIosHint); return; }
+      if (!this.push.supported()) { this.notice(noticeEl, "quiet", t.pushUnsupported); return; }
+      const label = btn && btn.firstElementChild;
+      if (btn) btn.disabled = true;
+      try {
+        const s = await this.push.subscribe(key);
+        const { error } = await this.db.rpc("save_push", {
+          p_endpoint: s.endpoint, p_p256dh: s.p256dh, p_auth: s.auth, p_token: token, p_admin: false
+        });
+        if (error) throw error;
+        this.notice(noticeEl, "ok", t.pushOn);
+        if (label) label.textContent = t.pushOnShort;
+      } catch (e) {
+        if (btn) btn.disabled = false;
+        this.notice(noticeEl, "error", String(e && e.message) === "DENIED" ? t.pushDenied : t.errGeneric);
+      }
+    },
+
     // Guard every page: without config there is nothing to talk to.
     requireConfig: function (noticeEl) {
       if (this.configured) return true;

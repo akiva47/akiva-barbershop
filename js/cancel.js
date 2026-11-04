@@ -48,10 +48,14 @@
     } else {
       A.clearNotice(el.notice);
       el.cancelBtn.classList.remove("hidden");
+      $("remindBtn").classList.toggle("hidden", !A.content.push_public_key);
     }
   }
 
+  $("remindBtn").addEventListener("click", () => A.remindMe(token, $("remindNotice"), $("remindBtn")));
+
   async function load() {
+    await A.loadContent();
     const { data, error } = await A.db.rpc("appointment_by_token", { p_token: token });
     appt = (!error && data && data.length) ? data[0] : null;
     render();

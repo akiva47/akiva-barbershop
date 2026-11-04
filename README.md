@@ -110,6 +110,38 @@ The keys live in `notify_settings`, readable and writable only by an admin.
 `notify_send` is not executable by `anon` or `authenticated`, so visitors
 cannot use it to send messages; `notify_test` is admin only.
 
+## Notifications from the site (Web Push)
+
+On top of Telegram/WhatsApp, the site sends its own phone notifications:
+
+- **To Akiva**, on every device where he taps *Settings → Booking alerts →
+  Turn on* in the admin: every booking, cancellation and new review.
+- **To customers** who tap *Remind me before* after booking (or on their
+  booking page): a reminder the day before and an hour before.
+
+How it fits together:
+
+| Piece | Where |
+| --- | --- |
+| Shows the notification | `sw.js` (no fetch handler, so it never caches the site) |
+| Subscribes a device | `APP.push` / `APP.remindMe` in `js/common.js`, `save_push()` in the database |
+| Sends | Edge Function `supabase/functions/push/index.ts` |
+| Triggers | `notify_send()` for alerts; `pg_cron` job `push-reminders` every 5 minutes |
+
+The signing (VAPID) keys are created in the admin's browser the first time
+notifications are switched on: the private half is stored in
+`notify_settings` (admin only), the public half in
+`site_content.push_public_key`. The Edge Function trusts a call only if it
+carries `notify_settings.push_secret`.
+
+Setup, once: run `supabase/migrations/20261105120000_web_push.sql`, then in the
+Supabase dashboard create an Edge Function named `push` from
+`supabase/functions/push/index.ts`.
+
+On iPhone, web notifications work only when the site is opened from its
+home-screen icon (iOS 16.4 and later). The admin has its own manifest
+(`manifest-admin.webmanifest`) so its icon opens the admin.
+
 ## Known limits
 
 - **No reminders for customers.** Customers do not get an SMS or an email; the

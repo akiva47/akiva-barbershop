@@ -379,7 +379,15 @@
     const bit = A.bitUrl();
     if (bit) { el.doneBit.href = bit; el.doneBit.classList.remove("hidden"); }
     else el.doneBit.classList.add("hidden");
+    // Reminders exist once the admin has switched notifications on.
+    $("remindBtn").classList.toggle("hidden", !A.content.push_public_key);
+    $("remindBtn").disabled = false;
+    $("remindBtn").firstElementChild.textContent = A.t.pushRemind;
+    A.clearNotice($("remindNotice"));
   }
+  $("remindBtn").addEventListener("click", () => {
+    if (state.last) A.remindMe(state.last.token, $("remindNotice"), $("remindBtn"));
+  });
 
   el.copyBtn.addEventListener("click", async () => {
     const t = A.t;
