@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="build" content="202611041453">
+<meta name="build" content="202611042232">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -10,19 +10,28 @@
 <meta name="apple-mobile-web-app-title" content="המספרה של עקיבא">
 <meta name="theme-color" content="#030407">
 <meta name="description" content="המספרה של עקיבא. פיידים, תספורות וסידור זקן במספרה של כיסא אחד. קובעים תור אונליין ומגיעים בלי לחכות.">
-<meta property="og:title" content="המספרה של עקיבא">
-<meta property="og:description" content="פיידים, תספורות וסידור זקן. קובעים תור אונליין ומגיעים בלי לחכות.">
-<meta property="og:image" content="assets/icon-512.png">
-<title>המספרה של עקיבא</title>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="המספרה של עקיבא">
+<meta property="og:locale" content="he_IL">
+<meta property="og:url" content="https://akiva47.github.io/akiva-barbershop/">
+<meta property="og:title" content="המספרה של עקיבא · פיידים, תספורות וזקן">
+<meta property="og:description" content="מספרה של כיסא אחד, בלי לחכות בתור. רואים שעות פנויות וקובעים תור אונליין תוך דקה.">
+<meta property="og:image" content="https://akiva47.github.io/akiva-barbershop/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="AKIVA barbershop">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://akiva47.github.io/akiva-barbershop/">
+<title>המספרה של עקיבא · פיידים, תספורות וזקן · קביעת תור אונליין</title>
 <link rel="apple-touch-icon" href="assets/icon-180.png">
 <link rel="icon" type="image/png" href="assets/icon-192.png">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700&family=Rubik:wght@500;700;800;900&display=swap">
-<link rel="stylesheet" href="css/site.css?v=202611041453">
+<link rel="stylesheet" href="css/site.css?v=202611042232">
 </head>
-<body class="site is-loading">
+<body class="site is-loading" data-title="pageTitle">
 
 <!-- ============================== preloader ============================== -->
 <div class="preloader" id="preloader" aria-hidden="true">
@@ -106,6 +115,10 @@
         </button>
         <a href="#services" class="btn btn-ghost btn-lg" data-magnetic><span data-t="heroPrices">למחירון</span></a>
       </div>
+      <a href="#work" class="hero-proof hidden" id="heroProof" data-reveal style="--d:.78s">
+        <span class="hp-thumbs" id="hpThumbs"></span>
+        <span class="hp-text"><b id="hpRating"></b><small id="hpLabel"></small></span>
+      </a>
       <ul class="hero-facts" data-reveal style="--d:.85s">
         <li><b data-t="fact1">כיסא אחד</b><span data-t="fact1s">כל תור רק שלך</span></li>
         <li><b data-t="fact2">פחות מדקה</b><span data-t="fact2s">לקבוע תור באתר</span></li>
@@ -118,12 +131,6 @@
   <!-- =============================== marquee ============================== -->
   <div class="marquee" id="marquee" aria-hidden="true"><div class="marquee-track" id="marqueeTrack"></div></div>
 
-  <!-- ============================== approach ============================== -->
-  <section class="section approach" id="approach" data-pole="0.93,0.5,-18,0.75" data-bg="#030407">
-    <span class="kicker" data-reveal data-t="approachKicker">הגישה</span>
-    <p class="scrub" id="manifesto" data-scrub></p>
-  </section>
-
   <!-- ============================== services ============================== -->
   <section class="section" id="services" data-pole="0.93,0.45,24,0.6" data-bg="#030407">
     <div class="sec-head">
@@ -133,20 +140,6 @@
     </div>
     <div class="svc-list" id="svcList">
       <div class="svc-skel"></div><div class="svc-skel"></div><div class="svc-skel"></div>
-    </div>
-  </section>
-
-  <!-- =============================== process ============================== -->
-  <section class="section process" id="process" data-pole="0.5,1.3,90,0.5" data-bg="#1558C9">
-    <div class="sec-head">
-      <span class="kicker kicker-dark" data-reveal data-t="processKicker">איך זה עובד</span>
-      <h2 class="sec-title" data-lines data-t-lines="processTitle"></h2>
-    </div>
-    <div class="steps" id="steps">
-      <article class="step" data-spot><i>01</i><h3 data-t="step1t"></h3><p data-t="step1p"></p></article>
-      <article class="step" data-spot><i>02</i><h3 data-t="step2t"></h3><p data-t="step2p"></p></article>
-      <article class="step" data-spot><i>03</i><h3 data-t="step3t"></h3><p data-t="step3p"></p></article>
-      <article class="step" data-spot><i>04</i><h3 data-t="step4t"></h3><p data-t="step4p"></p></article>
     </div>
   </section>
 
@@ -167,13 +160,6 @@
         <div class="work-track" id="workTrack"></div>
       </div>
     </div>
-  </section>
-
-  <!-- ================================ stats =============================== -->
-  <section class="stats hidden" id="stats">
-    <div class="stat" data-reveal><b data-count="0" id="statYears">0</b><span data-t="statYears">שנות ניסיון</span></div>
-    <div class="stat" data-reveal style="--d:.1s"><b data-count="0" id="statClients">0</b><span data-t="statClients">לקוחות מרוצים</span></div>
-    <div class="stat" data-reveal style="--d:.2s"><b data-count="0" id="statCuts">0</b><span data-t="statCuts">תספורות</span></div>
   </section>
 
   <!-- ============================ testimonials ============================ -->
@@ -212,6 +198,33 @@
     </form>
   </section>
 
+  <!-- ============================== approach ============================== -->
+  <section class="section approach" id="approach" data-pole="0.93,0.5,-18,0.75" data-bg="#030407">
+    <span class="kicker" data-reveal data-t="approachKicker">הגישה</span>
+    <p class="scrub" id="manifesto" data-scrub></p>
+  </section>
+
+  <!-- =============================== process ============================== -->
+  <section class="section process" id="process" data-pole="0.5,1.3,90,0.5" data-bg="#1558C9">
+    <div class="sec-head">
+      <span class="kicker kicker-dark" data-reveal data-t="processKicker">איך זה עובד</span>
+      <h2 class="sec-title" data-lines data-t-lines="processTitle"></h2>
+    </div>
+    <div class="steps" id="steps">
+      <article class="step" data-spot><i>01</i><h3 data-t="step1t"></h3><p data-t="step1p"></p></article>
+      <article class="step" data-spot><i>02</i><h3 data-t="step2t"></h3><p data-t="step2p"></p></article>
+      <article class="step" data-spot><i>03</i><h3 data-t="step3t"></h3><p data-t="step3p"></p></article>
+      <article class="step" data-spot><i>04</i><h3 data-t="step4t"></h3><p data-t="step4p"></p></article>
+    </div>
+  </section>
+
+  <!-- ================================ stats =============================== -->
+  <section class="stats hidden" id="stats">
+    <div class="stat" data-reveal><b data-count="0" id="statYears">0</b><span data-t="statYears">שנות ניסיון</span></div>
+    <div class="stat" data-reveal style="--d:.1s"><b data-count="0" id="statClients">0</b><span data-t="statClients">לקוחות מרוצים</span></div>
+    <div class="stat" data-reveal style="--d:.2s"><b data-count="0" id="statCuts">0</b><span data-t="statCuts">תספורות</span></div>
+  </section>
+
   <!-- ================================ about =============================== -->
   <section class="section about" id="about" data-pole="0.94,0.3,-10,0.55" data-bg="#030407">
     <div class="about-media" data-reveal="clip">
@@ -234,6 +247,10 @@
       </div>
 
       <div class="contact-row" id="contactRow" data-reveal></div>
+      <button type="button" class="btn btn-ghost share-btn" data-share data-reveal>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
+        <span data-t="shareShop">שלח את המספרה לחבר</span>
+      </button>
       <p class="address" id="address"></p>
     </div>
   </section>
@@ -359,6 +376,7 @@
             <span data-t="addToCalendar">הוסף ליומן</span></button>
           <a class="btn btn-bit btn-block hidden" id="doneBit" target="_blank" rel="noopener noreferrer"><span data-t="payBit">לתשלום בביט</span></a>
           <button type="button" class="btn btn-ghost btn-block" id="copyBtn"><span data-t="copyLink">העתק קישור ביטול</span></button>
+          <button type="button" class="btn btn-ghost btn-block" data-share><span data-t="shareShop">שלח את המספרה לחבר</span></button>
         </div>
         <p class="fine" data-t="saveThisLink"></p>
         <input id="cancelLink" type="text" readonly class="link-field" aria-label="cancel link">
@@ -383,12 +401,12 @@
   <div class="lb-count" id="lbCount"></div>
 </div>
 
-<script src="js/supabase.js?v=202611041453"></script>
-<script src="js/config.js?v=202611041453"></script>
-<script src="js/i18n.js?v=202611041453"></script>
-<script src="js/common.js?v=202611041453"></script>
-<script src="js/fx.js?v=202611041453"></script>
-<script src="js/site.js?v=202611041453"></script>
-<script src="js/booking.js?v=202611041453"></script>
+<script src="js/supabase.js?v=202611042232"></script>
+<script src="js/config.js?v=202611042232"></script>
+<script src="js/i18n.js?v=202611042232"></script>
+<script src="js/common.js?v=202611042232"></script>
+<script src="js/fx.js?v=202611042232"></script>
+<script src="js/site.js?v=202611042232"></script>
+<script src="js/booking.js?v=202611042232"></script>
 </body>
 </html>

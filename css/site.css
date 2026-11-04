@@ -221,6 +221,15 @@ body.is-loading .pole-fly { opacity: 0; }
 .hero-title .line:nth-child(3) .w { color: var(--lime); }
 .hero-sub { max-width: 520px; font-size: clamp(17px, 2vw, 20px); color: var(--ink-2); margin: 0 0 32px; font-weight: 300; }
 .hero-ctas { display: flex; flex-wrap: wrap; gap: 12px; }
+.hero-proof { display: inline-flex; align-items: center; gap: 14px; margin-top: 26px; padding: 8px 18px 8px 8px; border-radius: 999px; background: rgba(16, 19, 27, .7); border: 1px solid var(--line-2); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transition: border-color .3s, transform .5s var(--ease); }
+[dir="rtl"] .hero-proof { padding: 8px 8px 8px 18px; }
+.hero-proof:hover { border-color: var(--lime); transform: translateY(-2px); }
+.hp-thumbs { display: flex; }
+.hp-thumbs img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 2px solid var(--bg); }
+.hp-thumbs img + img { margin-inline-start: -14px; }
+.hp-text { display: flex; flex-direction: column; line-height: 1.15; }
+.hp-text b { font-family: var(--f-display); font-weight: 800; font-size: 17px; color: var(--lime); }
+.hp-text small { font-size: 13px; color: var(--ink-2); }
 .hero-facts { list-style: none; margin: clamp(36px, 7vh, 64px) 0 0; padding: 22px 0 0; border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; max-width: 760px; }
 .hero-facts li { display: flex; flex-direction: column; gap: 2px; }
 .hero-facts b { font-family: var(--f-display); font-size: clamp(17px, 2.4vw, 24px); font-weight: 800; }
@@ -391,6 +400,8 @@ body.is-loading .pole-fly { opacity: 0; }
 .contact-row a svg { width: 19px; height: 19px; }
 .contact-row a.wa { background: var(--wa); border-color: var(--wa); color: #052E16; font-weight: 700; }
 svg.wa-ico { fill: currentColor; stroke: none; }
+.share-btn { margin-top: 12px; }
+.share-btn svg { width: 18px; height: 18px; }
 .address { color: var(--ink-3); margin: 16px 0 0; font-size: 15px; }
 @media (min-width: 900px) { .about { grid-template-columns: 5fr 6fr; } .about-media { position: sticky; top: 110px; } }
 
