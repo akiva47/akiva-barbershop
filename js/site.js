@@ -306,8 +306,10 @@
   let rvShown = RV_PAGE;
   function renderReviews() {
     const has = S.reviews.length > 0;
-    $("reviews").classList.toggle("hidden", !has);
-    if (!has) return;
+    // The section stays up even with no reviews: it is where customers write one.
+    $("reviews").classList.toggle("hidden", !A.configured);
+    $("rvEmpty").classList.toggle("hidden", has);
+    if (!has) { $("rvStage").innerHTML = ""; $("rvMore").classList.add("hidden"); return; }
     $("rvStage").innerHTML = S.reviews.map((r, i) => {
       const initial = A.esc(String(r.author || "?").trim().charAt(0));
       return '<figure class="rv' + (i < rvShown ? "" : " hidden") + '" data-reveal data-spot style="--d:' + ((i % RV_PAGE) * 0.08) + 's">' +
@@ -323,6 +325,66 @@
     rvShown += RV_PAGE;
     renderReviews();
     document.dispatchEvent(new CustomEvent("site:layout"));
+  });
+
+  // ------------------------------------------------- customers write a review
+  // The review goes through submit_review(), which files it switched off; it
+  // only appears on the site once the admin approves it.
+  const rv = { rating: 0, form: $("rvForm") };
+  function paintStars(n) {
+    rv.rating = n;
+    $("rvRate").querySelectorAll("button").forEach((b) => {
+      const on = Number(b.getAttribute("data-v")) <= n;
+      b.classList.toggle("on", on);
+      b.setAttribute("aria-checked", String(Number(b.getAttribute("data-v")) === n));
+    });
+  }
+  $("rvRate").addEventListener("click", (e) => {
+    const b = e.target.closest("button");
+    if (b) paintStars(Number(b.getAttribute("data-v")));
+  });
+  $("rvWrite").addEventListener("click", () => {
+    const open = !rv.form.classList.contains("open");
+    rv.form.classList.toggle("open", open);
+    rv.form.setAttribute("aria-hidden", String(!open));
+    $("rvWrite").setAttribute("aria-expanded", String(open));
+    if (open) {
+      if (!rv.rating) paintStars(5);
+      setTimeout(() => { rv.form.scrollIntoView({ behavior: "smooth", block: "center" }); if (FX.fine) $("rvName").focus(); }, 350);
+    }
+    setTimeout(() => document.dispatchEvent(new CustomEvent("site:layout")), 700);
+  });
+  rv.form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const t = A.t;
+    const note = $("rvNotice");
+    A.clearNotice(note);
+    if ($("rvHp").value) return;                       // a bot filled the hidden field
+    const name = $("rvName").value.trim();
+    const text = $("rvText").value.trim();
+    if (name.length < 2) { A.notice(note, "error", t.errBadName); $("rvName").focus(); return; }
+    if (text.length < 5) { A.notice(note, "error", t.reviewTooShort); $("rvText").focus(); return; }
+    if (!rv.rating) { A.notice(note, "error", t.reviewPickStars); return; }
+    let last = 0;
+    try { last = Number(localStorage.getItem("barbershop.reviewed") || 0); } catch (e2) {}
+    if (Date.now() - last < 24 * 3600 * 1000) { A.notice(note, "quiet", t.reviewAlready); return; }
+    const btn = $("rvSend");
+    btn.disabled = true;
+    btn.firstElementChild.textContent = t.reviewSending;
+    let res;
+    try { res = await A.db.rpc("submit_review", { p_author: name, p_body: text, p_rating: rv.rating }); }
+    catch (e3) { res = { error: e3 }; }
+    btn.disabled = false;
+    btn.firstElementChild.textContent = t.reviewSend;
+    if (res.error) {
+      const msg = String(res.error.message || "");
+      A.notice(note, "error", msg.indexOf("TOO_MANY") > -1 ? t.errGeneric : A.errorText(res.error));
+      return;
+    }
+    try { localStorage.setItem("barbershop.reviewed", String(Date.now())); } catch (e4) {}
+    rv.form.reset();
+    paintStars(5);
+    A.notice(note, "ok", t.reviewThanks);
   });
 
   // ------------------------------------------------------------------ about

@@ -347,7 +347,22 @@ body.is-loading .pole-fly { opacity: 0; }
 .rv-stars { color: var(--lime); letter-spacing: .15em; font-size: 15px; line-height: 1; }
 .rv-off { color: var(--line-2); }
 .rv blockquote { margin: 0; font-size: 16px; line-height: 1.6; color: var(--ink-2); font-weight: 400; }
-.rv-more { margin-top: 26px; }
+.rv-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+.rv-empty { color: var(--ink-2); font-size: 18px; margin: 0 0 8px; max-width: 560px; }
+.rv-form { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .7s var(--ease), opacity .5s; opacity: 0; max-width: 620px; }
+.rv-form.open { grid-template-rows: 1fr; opacity: 1; }
+.rv-form-in { overflow: hidden; }
+.rv-form.open .rv-form-in { padding-top: 26px; }
+.rv-form h3 { margin: 0 0 12px; font-family: var(--f-display); font-weight: 800; font-size: 28px; letter-spacing: -.02em; }
+.rv-rate { display: flex; gap: 4px; direction: ltr; margin-bottom: 16px; justify-content: flex-start; }
+[dir="rtl"] .rv-rate { justify-content: flex-end; }
+.rv-rate button { font-size: 34px; line-height: 1; color: var(--line-2); padding: 2px; transition: color .2s, transform .3s var(--ease); }
+.rv-rate button.on { color: var(--lime); }
+.rv-rate button:hover { transform: scale(1.15); }
+.fl-area textarea { width: 100%; min-height: 130px; padding: 28px 16px 12px; border-radius: 16px; border: 1px solid var(--line-2); background: var(--card); color: var(--ink); font: inherit; font-size: 17px; outline: none; resize: vertical; transition: border-color .3s, background .3s; }
+.fl-area textarea:focus { border-color: var(--lime); background: var(--card-2); }
+.fl-area textarea:focus + span, .fl-area textarea:not(:placeholder-shown) + span { top: 9px; font-size: 12px; color: var(--lime); }
+.hp { position: absolute !important; width: 1px; height: 1px; opacity: 0; pointer-events: none; inset-inline-start: -9999px; }
 
 /* ------------------------------------------------------------------- about */
 .about { display: grid; gap: clamp(40px, 6vw, 90px); align-items: start; }

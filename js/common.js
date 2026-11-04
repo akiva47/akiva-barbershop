@@ -138,6 +138,7 @@
       if (msg.indexOf("BAD_NAME") > -1) return t.errBadName;
       if (msg.indexOf("BAD_PHONE") > -1) return t.errBadPhone;
       if (msg.indexOf("TOO_MANY") > -1) return t.errTooMany;
+      if (msg.indexOf("BAD_REVIEW") > -1) return t.errBadReview;
       return t.errGeneric;
     },
 
