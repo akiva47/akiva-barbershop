@@ -67,6 +67,12 @@
   }
 
   window.addEventListener("popstate", () => close(true));
+  el.mineList.addEventListener("click", (e) => {
+    if (!e.target.closest("[data-close-sheet]")) return;
+    e.preventDefault();
+    close();
+    setTimeout(() => { location.hash = "review"; }, 450);
+  });
   el.close.addEventListener("click", () => close());
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
 
@@ -440,7 +446,8 @@
       return '<div class="mine' + (off ? " off" : "") + '">' +
         '<div class="mine-date"><b>' + A.dayNumber(A.isoDate(d)) + "</b><small>" + A.esc(month) + "</small></div>" +
         '<div class="mine-main"><b>' + A.esc(svcName) + "</b><span>" + A.esc(t.weekdays[A.weekdayOf(A.isoDate(d))]) + " · " + A.timeStr(d) + "</span></div>" +
-        (tag ? '<span class="tag">' + A.esc(tag) + "</span>"
+        (r.status === "booked" && d <= now ? '<a href="#review" data-close-sheet>' + A.esc(t.reviewAsk) + "</a>"
+          : tag ? '<span class="tag">' + A.esc(tag) + "</span>"
              : '<a href="cancel.html?t=' + encodeURIComponent(r.token) + '">' + A.esc(t.manage) + "</a>") +
         "</div>";
     }).join("");

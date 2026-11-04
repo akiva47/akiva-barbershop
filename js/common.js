@@ -62,7 +62,8 @@
       const t = this.t;
       document.documentElement.lang = this.lang;
       document.documentElement.dir = t.dir;
-      document.title = t.shopName;
+      const tk = document.body && document.body.getAttribute("data-title");
+      document.title = (tk && t[tk]) || t.shopName;
       document.querySelectorAll("[data-t]").forEach((el) => {
         const key = el.getAttribute("data-t");
         if (t[key] !== undefined) el.textContent = t[key];

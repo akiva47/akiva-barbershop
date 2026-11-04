@@ -42,8 +42,9 @@
       A.notice(el.notice, "quiet", t.alreadyCancelled);
       el.cancelBtn.classList.add("hidden");
     } else if (starts.getTime() <= Date.now()) {
-      A.notice(el.notice, "quiet", t.pastAppointment);
+      A.notice(el.notice, "quiet", t.reviewAskLong);
       el.cancelBtn.classList.add("hidden");
+      $("reviewLink").classList.remove("hidden");
     } else {
       A.clearNotice(el.notice);
       el.cancelBtn.classList.remove("hidden");

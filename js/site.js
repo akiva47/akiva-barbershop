@@ -516,7 +516,94 @@
     renderAbout();
     renderHours();
     renderContact();
+    renderProof();
     if (S.nextFree !== undefined && $("nextFree").classList.contains("in")) renderNextFree();
+  }
+
+  // ------------------------------------------------------ proof in the hero
+  // Real work and real ratings, right under the booking button.
+  function renderProof() {
+    const t = A.t;
+    const box = $("heroProof");
+    const pics = S.gallery.slice(0, 3);
+    const n = S.reviews.length;
+    if (!pics.length && !n) { box.classList.add("hidden"); return; }
+    box.classList.remove("hidden");
+    $("hpThumbs").innerHTML = pics.map((g) => '<img src="' + A.esc(g.url) + '" alt="" loading="eager" decoding="async">').join("");
+    $("hpThumbs").classList.toggle("hidden", !pics.length);
+    if (n) {
+      const avg = S.reviews.reduce((a, r) => a + (Number(r.rating) || 0), 0) / n;
+      $("hpRating").textContent = "★ " + avg.toFixed(1);
+      $("hpLabel").textContent = n + " " + t.proofReviews;
+      box.setAttribute("href", "#reviews");
+    } else {
+      $("hpRating").textContent = t.proofWork;
+      $("hpLabel").textContent = t.proofSee;
+      box.setAttribute("href", "#work");
+    }
+  }
+
+  // ------------------------------------------------------------------ share
+  // Word of mouth is how a barbershop grows: one tap sends the site on.
+  document.addEventListener("click", async (e) => {
+    const b = e.target.closest("[data-share]");
+    if (!b) return;
+    const t = A.t;
+    const url = location.origin + location.pathname.replace(/[^/]*$/, "");
+    if (navigator.share) {
+      try { await navigator.share({ title: t.shopName, text: t.shareText, url: url }); } catch (err) {}
+      return;
+    }
+    window.open("https://wa.me/?text=" + encodeURIComponent(t.shareText + " " + url), "_blank", "noopener");
+  });
+
+  // ------------------------------------------- straight to the review form
+  // index.html#review (from a past booking) opens the form ready to write.
+  function openReviewFromLink() {
+    if (location.hash !== "#review") return;
+    history.replaceState(null, "", location.pathname + location.search);
+    const sec = $("reviews");
+    if (sec.classList.contains("hidden")) return;
+    sec.scrollIntoView({ behavior: "smooth" });
+    if (!$("rvForm").classList.contains("open")) setTimeout(() => $("rvWrite").click(), 700);
+  }
+  window.addEventListener("hashchange", openReviewFromLink);
+
+  // ------------------------------------------------------- what Google reads
+  // Business details for search results, built from what the admin entered.
+  function renderSchema() {
+    const c = A.content;
+    const base = location.origin + location.pathname.replace(/[^/]*$/, "");
+    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const data = {
+      "@context": "https://schema.org",
+      "@type": "HairSalon",
+      name: window.I18N.he.shopName,
+      alternateName: "AKIVA Barbershop",
+      url: base,
+      image: base + "assets/og.jpg",
+      logo: base + "assets/icon-512.png",
+      description: A.c("hero_sub", "heroSub"),
+      openingHoursSpecification: S.hours.filter((h) => h.is_open).map((h) => ({
+        "@type": "OpeningHoursSpecification", dayOfWeek: days[h.weekday],
+        opens: A.hhmm(h.opens), closes: A.hhmm(h.closes)
+      }))
+    };
+    if (c.phone) data.telephone = c.phone;
+    if (c.address_he) data.address = { "@type": "PostalAddress", streetAddress: c.address_he, addressCountry: "IL" };
+    const prices = S.services.map((x) => Number(x.price)).filter((x) => x > 0);
+    if (prices.length) data.priceRange = "₪" + Math.min(...prices) + "–₪" + Math.max(...prices);
+    const same = [c.instagram, c.tiktok, c.facebook].filter(Boolean).filter((u) => /^https?:/i.test(u));
+    if (same.length) data.sameAs = same;
+    if (S.services.length) {
+      data.hasOfferCatalog = { "@type": "OfferCatalog", name: "Services", itemListElement: S.services.map((x) => ({
+        "@type": "Offer", price: x.price, priceCurrency: "ILS",
+        itemOffered: { "@type": "Service", name: x.name_he }
+      })) };
+    }
+    let tag = document.getElementById("ldShop");
+    if (!tag) { tag = document.createElement("script"); tag.type = "application/ld+json"; tag.id = "ldShop"; document.head.appendChild(tag); }
+    tag.textContent = JSON.stringify(data);
   }
 
   // --------------------------------------------------------- nav and chrome
@@ -596,6 +683,8 @@
     FX.observe();
     FX.magnetic();
     document.dispatchEvent(new CustomEvent("site:ready"));
+    renderSchema();
+    setTimeout(openReviewFromLink, 900);
     setTimeout(() => document.dispatchEvent(new CustomEvent("site:layout")), 300);
     setTimeout(findNextFree, 400);
   });
