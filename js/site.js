@@ -365,9 +365,6 @@
     if (name.length < 2) { A.notice(note, "error", t.errBadName); $("rvName").focus(); return; }
     if (text.length < 5) { A.notice(note, "error", t.reviewTooShort); $("rvText").focus(); return; }
     if (!rv.rating) { A.notice(note, "error", t.reviewPickStars); return; }
-    let last = 0;
-    try { last = Number(localStorage.getItem("barbershop.reviewed") || 0); } catch (e2) {}
-    if (Date.now() - last < 24 * 3600 * 1000) { A.notice(note, "quiet", t.reviewAlready); return; }
     const btn = $("rvSend");
     btn.disabled = true;
     btn.firstElementChild.textContent = t.reviewSending;
@@ -381,7 +378,6 @@
       A.notice(note, "error", msg.indexOf("TOO_MANY") > -1 ? t.errGeneric : A.errorText(res.error));
       return;
     }
-    try { localStorage.setItem("barbershop.reviewed", String(Date.now())); } catch (e4) {}
     rv.form.reset();
     paintStars(5);
     A.notice(note, "ok", t.reviewThanks);
