@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="build" content="202611031734">
+<meta name="build" content="202611041437">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700&family=Rubik:wght@500;700;800;900&display=swap">
-<link rel="stylesheet" href="css/site.css?v=202611031734">
+<link rel="stylesheet" href="css/site.css?v=202611041437">
 </head>
 <body class="site is-loading">
 
@@ -182,8 +182,34 @@
       <span class="kicker" data-reveal data-t="reviewsKicker">מה אומרים</span>
       <h2 class="sec-title" data-lines data-t-lines="reviewsTitle"></h2>
     </div>
+    <p class="rv-empty hidden" id="rvEmpty" data-t="reviewsFirst">עוד אין כאן תגובות. היית אצלי? תהיה הראשון לכתוב.</p>
     <div class="rv-grid" id="rvStage"></div>
-    <button type="button" class="btn btn-ghost rv-more hidden" id="rvMore"><span data-t="reviewsMore">עוד תגובות</span></button>
+    <div class="rv-actions">
+      <button type="button" class="btn btn-ghost rv-more hidden" id="rvMore"><span data-t="reviewsMore">עוד תגובות</span></button>
+      <button type="button" class="btn btn-main" id="rvWrite" aria-expanded="false"><span data-t="reviewWrite">כתוב תגובה</span></button>
+    </div>
+
+    <form class="rv-form" id="rvForm" novalidate aria-hidden="true">
+      <div class="rv-form-in">
+        <h3 data-t="reviewFormTitle">איך היה אצלי?</h3>
+        <div class="rv-rate" id="rvRate" role="radiogroup" aria-label="rating">
+          <button type="button" data-v="1" aria-label="1">★</button><button type="button" data-v="2" aria-label="2">★</button><button type="button" data-v="3" aria-label="3">★</button><button type="button" data-v="4" aria-label="4">★</button><button type="button" data-v="5" aria-label="5">★</button>
+        </div>
+        <label class="fl">
+          <input id="rvName" type="text" maxlength="40" autocomplete="given-name" placeholder=" " required>
+          <span data-t="reviewName">השם שלך</span>
+        </label>
+        <label class="fl fl-area">
+          <textarea id="rvText" maxlength="600" rows="4" placeholder=" " required></textarea>
+          <span data-t="reviewText">מה תרצה לספר?</span>
+        </label>
+        <!-- left empty by people, filled in by bots -->
+        <input type="text" id="rvHp" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div id="rvNotice" class="notice hidden"></div>
+        <button class="btn btn-main btn-lg btn-block" type="submit" id="rvSend"><span data-t="reviewSend">שלח תגובה</span></button>
+        <p class="fine" data-t="reviewModerated">התגובה תופיע באתר אחרי שעקיבא יאשר אותה.</p>
+      </div>
+    </form>
   </section>
 
   <!-- ================================ about =============================== -->
@@ -357,12 +383,12 @@
   <div class="lb-count" id="lbCount"></div>
 </div>
 
-<script src="js/supabase.js?v=202611031734"></script>
-<script src="js/config.js?v=202611031734"></script>
-<script src="js/i18n.js?v=202611031734"></script>
-<script src="js/common.js?v=202611031734"></script>
-<script src="js/fx.js?v=202611031734"></script>
-<script src="js/site.js?v=202611031734"></script>
-<script src="js/booking.js?v=202611031734"></script>
+<script src="js/supabase.js?v=202611041437"></script>
+<script src="js/config.js?v=202611041437"></script>
+<script src="js/i18n.js?v=202611041437"></script>
+<script src="js/common.js?v=202611041437"></script>
+<script src="js/fx.js?v=202611041437"></script>
+<script src="js/site.js?v=202611041437"></script>
+<script src="js/booking.js?v=202611041437"></script>
 </body>
 </html>

@@ -113,7 +113,8 @@
     const html = TABS.map((x) =>
       '<button type="button" class="tab" role="tab" data-tab="' + x.id + '" aria-selected="' + (x.id === state.tab) + '">' +
       I[x.id] + "<span>" + esc(t[x.t]) + "</span>" +
-      (x.id === "diary" && todayCount ? '<span class="badge">' + todayCount + "</span>" : "") + "</button>").join("");
+      (x.id === "diary" && todayCount ? '<span class="badge">' + todayCount + "</span>" : "") +
+      (x.id === "reviews" && pendingCount() ? '<span class="badge">' + pendingCount() + "</span>" : "") + "</button>").join("");
     $("tabs").innerHTML = html;
     $("bottomTabs").innerHTML = html;
   }
@@ -977,17 +978,28 @@
     showMissing("reviews", error);
     state.reviews = (!error && data) ? data : [];
     renderReviews();
+    renderTabs();
   }
+
+  // A review a customer wrote that the admin has not yet approved.
+  const isPending = (r) => r.source === "customer" && !r.approved_at;
+  function pendingCount() { return state.reviews.filter(isPending).length; }
 
   function renderReviews() {
     const t = A.t;
     const box = $("reviewsList");
     box.innerHTML = "";
     if (!state.reviews.length) { box.innerHTML = '<div class="card empty">' + esc(t.reviewsEmpty) + "</div>"; return; }
-    state.reviews.forEach((r) => {
+    // Waiting ones first, so they are the first thing the admin sees.
+    const list = state.reviews.slice().sort((a, b) => (isPending(b) - isPending(a)));
+    list.forEach((r) => {
       const card = document.createElement("div");
-      card.className = "rv-card" + (r.active ? "" : " off");
-      card.innerHTML = '<div class="form-grid">' +
+      const pending = isPending(r);
+      card.className = "rv-card" + (pending ? " pending" : r.active ? "" : " off");
+      card.innerHTML =
+        (pending ? '<div class="rv-pending"><span class="badge-pending">' + esc(t.reviewPending) + "</span><small>" +
+          esc(A.dateStr(new Date(r.created_at))) + "</small></div>" : "") +
+        '<div class="form-grid">' +
         '<label class="f"><span>' + esc(t.reviewAuthor) + '</span><input class="input" data-k="author" maxlength="60" value="' + esc(r.author) + '"></label>' +
         '<div class="f"><span>' + esc(t.rating) + '</span><div class="stars"></div></div>' +
         '<label class="f wide"><span>' + esc(t.reviewBody) + '</span><textarea class="input" data-k="body" rows="3" maxlength="600">' + esc(r.body) + "</textarea></label>" +
@@ -1004,11 +1016,13 @@
       save.type = "button"; save.className = "chip chip-gold push"; save.innerHTML = "<span>" + esc(t.save) + "</span>";
       save.addEventListener("click", async () => {
         if (!r.author.trim() || !r.body.trim()) { flash("error", t.errGeneric); return; }
-        const { error } = await A.db.from("testimonials").update({
-          author: r.author.trim(), body: r.body.trim(), rating: r.rating, active: r.active
-        }).eq("id", r.id);
+        const row = { author: r.author.trim(), body: r.body.trim(), rating: r.rating, active: r.active };
+        // Switching a customer's review on is approving it.
+        if (r.active && !r.approved_at) row.approved_at = new Date().toISOString();
+        const { error } = await A.db.from("testimonials").update(row).eq("id", r.id);
         if (error) { flash("error", A.errorText(error)); return; }
         flash("ok", t.saved);
+        loadReviews();
       });
       const del = document.createElement("button");
       del.type = "button"; del.className = "chip chip-danger"; del.innerHTML = I.trash;
@@ -1018,6 +1032,21 @@
         if (error) { flash("error", A.errorText(error)); return; }
         loadReviews();
       });
+      if (pending) {
+        const ok = document.createElement("button");
+        ok.type = "button"; ok.className = "chip chip-gold push"; ok.innerHTML = "<span>" + esc(t.reviewApprove) + "</span>";
+        ok.addEventListener("click", async () => {
+          const { error } = await A.db.from("testimonials").update({
+            author: r.author.trim(), body: r.body.trim(), rating: r.rating,
+            active: true, approved_at: new Date().toISOString()
+          }).eq("id", r.id);
+          if (error) { flash("error", A.errorText(error)); return; }
+          flash("ok", t.reviewApproved);
+          loadReviews();
+        });
+        save.classList.remove("push");
+        foot.append(ok);
+      }
       foot.append(save, del);
       box.appendChild(card);
     });
