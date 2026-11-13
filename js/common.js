@@ -285,9 +285,15 @@
       },
       // Ask permission (this must be the first await after the tap, or iOS
       // refuses), then subscribe this device with the shop's public key.
-      subscribe: async function (publicKey) {
+      // Ask only when not already allowed: a second ask, away from the tap,
+      // is answered "denied" by iOS even when notifications are on.
+      ask: async function () {
+        if (Notification.permission === "granted") return true;
         const perm = await Notification.requestPermission();
-        if (perm !== "granted") throw new Error("DENIED");
+        return perm === "granted" || Notification.permission === "granted";
+      },
+      subscribe: async function (publicKey) {
+        if (Notification.permission !== "granted" && !(await this.ask())) throw new Error("DENIED");
         const reg = await navigator.serviceWorker.register("sw.js");
         await navigator.serviceWorker.ready;
         let sub = await reg.pushManager.getSubscription();

@@ -1245,8 +1245,7 @@
     busy(btn, true);
     try {
       // Permission first: iOS only asks while the tap is still fresh.
-      const perm = await Notification.requestPermission();
-      if (perm !== "granted") throw new Error("DENIED");
+      if (!(await A.push.ask())) throw new Error("DENIED");
       const key = await ensurePushKeys();
       const sub = await A.push.subscribe(key);
       const { error } = await A.db.rpc("save_push", {
