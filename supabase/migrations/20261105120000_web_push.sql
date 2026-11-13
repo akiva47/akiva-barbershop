@@ -45,12 +45,10 @@ create table if not exists public.push_subscriptions (
 create unique index if not exists push_admin_endpoint on public.push_subscriptions(endpoint) where is_admin;
 create index if not exists push_token_idx on public.push_subscriptions(token);
 
+-- Only an admin can see or change the list of devices; visitors get no rows.
 alter table public.push_subscriptions enable row level security;
-drop policy if exists push_admin_all on public.push_subscriptions;
 create policy push_admin_all on public.push_subscriptions for all
   using (public.is_admin()) with check (public.is_admin());
-revoke all on public.push_subscriptions from anon;
-grant select, delete on public.push_subscriptions to authenticated;
 
 -- The only door: a customer may register for their own booking (they hold its
 -- token); a device becomes an admin device only for a signed-in admin.
@@ -83,13 +81,17 @@ begin
   return true;
 end;
 $$;
-revoke all on function public.save_push(text, text, text, uuid, boolean) from public;
 grant execute on function public.save_push(text, text, text, uuid, boolean) to anon, authenticated;
 
 -- ---------------------------------------------------------------------------
 -- Calling the Edge Function. The anon key below is the same public key the
 -- website already carries; it only gets the call past the gateway. What the
 -- function trusts is push_secret, which it checks against this table.
+--
+-- push_call is reachable through the API like any public function, so it
+-- guards itself: it does nothing unless the database itself asked, by setting
+-- app.push_ok for the transaction (notify_send and the reminder job do).
+-- A visitor's API call cannot set that.
 -- ---------------------------------------------------------------------------
 create or replace function public.push_call(p_body jsonb)
 returns void
@@ -100,6 +102,7 @@ as $$
 declare
   n public.notify_settings%rowtype;
 begin
+  if coalesce(current_setting('app.push_ok', true), '') <> '1' then return; end if;
   select * into n from public.notify_settings where id = 1;
   if not found or n.vapid_private is null then return; end if;   -- not switched on yet
   perform net.http_post(
@@ -111,10 +114,10 @@ begin
 exception when others then null;
 end;
 $$;
-revoke all on function public.push_call(jsonb) from public, anon, authenticated;
 
 -- Every alert Akiva already gets now also goes to his devices: the first line
--- is the notification's title, the rest its text.
+-- is the notification's title, the rest its text. Replacing the function keeps
+-- its existing permissions, so visitors still cannot call it.
 create or replace function public.notify_send(p_text text)
 returns void
 language plpgsql
@@ -148,6 +151,7 @@ begin
     end;
   end if;
 
+  perform set_config('app.push_ok', '1', true);
   perform public.push_call(jsonb_build_object(
     'audience', 'admin',
     'title', split_part(p_text, E'\n', 1),
@@ -158,16 +162,10 @@ exception when others then
   null;
 end;
 $$;
-revoke all on function public.notify_send(text) from public, anon, authenticated;
 
 -- ---------------------------------------------------------------------------
 -- Every five minutes: ask the function to send the reminders that are due.
 -- ---------------------------------------------------------------------------
-do $$
-begin
-  perform cron.unschedule(jobid) from cron.job where jobname = 'push-reminders';
-exception when others then null;
-end;
-$$;
+-- cron.schedule replaces a job of the same name, so this is safe to run again.
 select cron.schedule('push-reminders', '*/5 * * * *',
-  $$ select public.push_call(jsonb_build_object('audience', 'reminders')) $$);
+  $$ select set_config('app.push_ok', '1', true), public.push_call(jsonb_build_object('audience', 'reminders')) $$);
